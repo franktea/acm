@@ -1,0 +1,5 @@
+/home/frank/github/www.spoj.com/4:PALIN_The_Next_Palindrome/obj/x86/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/frank/github/www.spoj.com/4:PALIN_The_Next_Palindrome/bin/Debug/4:PALIN_The_Next_Palindrome.exe.mdb
+/home/frank/github/www.spoj.com/4:PALIN_The_Next_Palindrome/bin/Debug/4:PALIN_The_Next_Palindrome.exe
+/home/frank/github/www.spoj.com/4:PALIN_The_Next_Palindrome/obj/x86/Debug/4:PALIN_The_Next_Palindrome.exe
+/home/frank/github/www.spoj.com/4:PALIN_The_Next_Palindrome/obj/x86/Debug/4:PALIN_The_Next_Palindrome.exe.mdb

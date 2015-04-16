@@ -1,0 +1,1 @@
+/home/frank/github/www.spoj.com/24:FCTRL2_Small_factorials/obj/x86/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs

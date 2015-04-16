@@ -1,0 +1,5 @@
+/home/frank/github/www.spoj.com/188:RECTNG1_Rectangles/obj/x86/Debug/.NETFramework,Version=v4.5.AssemblyAttribute.cs
+/home/frank/github/www.spoj.com/188:RECTNG1_Rectangles/bin/Debug/188:RECTNG1_Rectangles.exe.mdb
+/home/frank/github/www.spoj.com/188:RECTNG1_Rectangles/bin/Debug/188:RECTNG1_Rectangles.exe
+/home/frank/github/www.spoj.com/188:RECTNG1_Rectangles/obj/x86/Debug/188:RECTNG1_Rectangles.exe
+/home/frank/github/www.spoj.com/188:RECTNG1_Rectangles/obj/x86/Debug/188:RECTNG1_Rectangles.exe.mdb

@@ -1,0 +1,13 @@
+﻿<Properties StartupItem="24:FCTRL2_Small_factorials.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="FCTRL2.py">
+    <Files>
+      <File FileName="Program.cs" Line="10" Column="10" />
+      <File FileName="FCTRL2.py" Line="16" Column="16" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
