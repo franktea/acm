@@ -3,30 +3,30 @@ using System.Collections.Generic;
 
 namespace RECTNG1_Rectangles
 {
-	class Edege
-	{
-		public int x1;
-		public int x2;
-		public int y1;
-		public int y2;
+    enum Direction {right, up};
 
-		public Edege(int x1, int y1, int x2, int y2)
+	class Point
+	{
+        public int x;
+        public int y;
+        public Direction d;
+
+        public Point(int x, int y, Direction d)
 		{
-			this.x1 = x1;
-			this.y1 = y1;
-			this.x2 = x2;
-			this.y2 = y2;
+            this.x = x;
+            this.y = y;
+            this.d = d;
 		}
 
 		public override bool Equals(object obj)
 		{
-			Edege eg2 = obj as Edege;
-			return x1 == eg2.x1 && y1 == eg2.y1 && x2 == eg2.x2 && y2 == eg2.y2;
+            Point p2 = obj as Point;
+            return x == p2.x && y == p2.y && d == p2.d;
 		}
 
 		public override int GetHashCode()
 		{
-			return (x1 + y1) ^ (x2 + y2);
+            return (x ^ y) + (int)d;
 		}	
 	}
 
@@ -37,7 +37,7 @@ namespace RECTNG1_Rectangles
 		public int y1;
 		public int y2;
 		public bool visited = false;
-		public Edege[] Edeges;
+        public List<Point> points = new List<Point>();
 
 		public RectAngle(int x1, int y1, int x2, int y2)
 		{
@@ -46,40 +46,51 @@ namespace RECTNG1_Rectangles
 			this.x2 = x2;
 			this.y2 = y2;
             visited = false;
-			Edeges = new Edege[] { new Edege (x1, y1, x1, y2),
-				new Edege (x1, y2, x2, y2),
-				new Edege (x2, y1, x2, y2),
-				new Edege (x1, y1, x2, y1)
-			};
+            for (int x = x1; x < x2; ++x)
+                for (int y = y1; y < y2; ++y)
+                {
+                    points.Add(new Point(x, y, Direction.right));
+                    points.Add(new Point(x, y, Direction.up));
+                    points.Add(new Point(x, y + 1, Direction.right));
+                    points.Add(new Point(x + 1, y, Direction.up));
+                }
 		}
+
+//        public string StringContent()
+//        {
+//            return String.Format("{0}, {1}, {2}, {3}", x1, y1, x2, y2);
+//        }
 	}
 
 	class MainClass
 	{
-        static void DFS(Dictionary<Edege, List<RectAngle> > dic, RectAngle ra)
+        static void DFS(Dictionary<Point, List<RectAngle> > dic, RectAngle ra)
         {
             ra.visited = true;
-            foreach (Edege edege in ra.Edeges)
+            foreach (Point p in ra.points)
             {
-                foreach (RectAngle rect_angle in dic[edege])
+                List<RectAngle> l = dic[p];
+                foreach (RectAngle rect_angle in l)
                 {
                     if (!rect_angle.visited)
                     {
+                        //Console.WriteLine("now: {0}", rect_angle.StringContent());
                         DFS(dic, rect_angle);
                     }
                 }
             }
         }
 
-		static int Count(Dictionary<Edege, List<RectAngle> > dic)
+		static int Count(Dictionary<Point, List<RectAngle> > dic)
 		{
             int result = 0;
-            foreach (KeyValuePair<Edege, List<RectAngle> > kv in dic)
+            foreach (KeyValuePair<Point, List<RectAngle> > kv in dic)
             {
                 foreach (RectAngle ra in kv.Value)
                 {
                     if (!ra.visited)
                     {
+                        //Console.WriteLine(ra.StringContent());
                         ++result;
                         DFS(dic, ra);
                     }
@@ -90,7 +101,7 @@ namespace RECTNG1_Rectangles
 		
 		public static void Main (string[] args)
 		{
-			int case_count = int.Parse (Console.ReadLine ());
+			int case_count = int.Parse (Console.ReadLine ());        
             for(int cc = 0; cc < case_count; ++cc)
 			{
                 if (cc > 0)
@@ -99,24 +110,24 @@ namespace RECTNG1_Rectangles
                 }
 
 				int rect_count = int.Parse (Console.ReadLine ());
-                Dictionary<Edege, List<RectAngle> > dic = new Dictionary<Edege, List<RectAngle> > ();
+                Dictionary<Point, List<RectAngle> > dic = new Dictionary<Point, List<RectAngle> > ();
 				while (rect_count-- > 0) 
 				{
 					string[] values = Console.ReadLine ().Split (' ');
 					RectAngle ra = new RectAngle (int.Parse (values [0]), int.Parse (values [1]), 
 						int.Parse (values [2]), int.Parse (values [3]));
-					foreach (Edege eg in ra.Edeges) 
+                    foreach (Point p in ra.points) 
 					{
-                        if (dic.ContainsKey(eg))
+                        if (dic.ContainsKey(p))
                         {
-                            List<RectAngle> l = dic[eg];
+                            List<RectAngle> l = dic[p];
                             l.Add(ra);
                         }
                         else
                         {
                             List<RectAngle> l = new List<RectAngle>();
                             l.Add(ra);
-                            dic.Add(eg, l);
+                            dic.Add(p, l);
                         }
 					}
 				}
