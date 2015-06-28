@@ -11,6 +11,7 @@
 #include <iostream>
 #include <string>
 #include <cstring>
+#include <sstream>
 #include <algorithm>
 
 using namespace std;
@@ -18,15 +19,17 @@ using namespace std;
 const int32_t max_size = 251;
 
 char data[max_size][max_size];
+bool visited[max_size][max_size];
 int32_t cols = 0;
 int32_t rows = 0;
 
 int32_t delta_x[] = {0, 1, 0, -1};
 int32_t delta_y[] = {-1, 0, 1, 0};
 
-void FindAndChange(char color, char new_color, int32_t x, int32_t y)
+void FindAndChange(char old_color, char new_color, int32_t x, int32_t y)
 {
 	data[x][y] = new_color;
+	visited[x][y] = true;
 	for(int32_t i = 0; i < 4; ++i)
 	{
 		int32_t new_x = x + delta_x[i];
@@ -34,35 +37,40 @@ void FindAndChange(char color, char new_color, int32_t x, int32_t y)
 		if(new_x < 1 || new_x > cols || new_y < 1 || new_y > rows)
 			continue;
 
-		if(data[new_x][new_y] != color)
+		if(visited[new_x][new_y])
 			continue;
 
-		FindAndChange(color, new_color, new_x, new_y);
+		if(data[new_x][new_y] != old_color)
+			continue;
+
+		FindAndChange(old_color, new_color, new_x, new_y);
 	}
 }
 
 int main()
 {
 	string line;
-	int c;
-	while((c = cin.peek()) != char_traits<char>::eof())
+	while(std::getline(cin, line))
 	{
 		char cmd;
-		switch(c)
+		switch(line[0])
 		{
 		case 'I':
-			cin>>cmd>>cols>>rows;
+		{
+			stringstream ss(line);
+			ss>>cmd>>cols>>rows;
 			memset(data, 'O', sizeof(data));
+		}
 			break;
 		case 'C':
-			cin>>cmd;
 			memset(data, 'O', sizeof(data));
 			break;
 		case 'L':
 		{
 			int32_t x, y;
 			char color;
-			cin>>cmd>>x>>y>>color;
+			stringstream ss(line);
+			ss>>cmd>>x>>y>>color;
 			data[x][y] = color;
 		}
 			break;
@@ -70,7 +78,8 @@ int main()
 		{
 			int32_t x, y1, y2;
 			char color;
-			cin>>cmd>>x>>y1>>y2>>color;
+			stringstream ss(line);
+			ss>>cmd>>x>>y1>>y2>>color;
 			if(y2 < y1)
 				std::swap(y1, y2);
 
@@ -82,7 +91,8 @@ int main()
 		{
 			int32_t x1, x2, y;
 			char color;
-			cin>>cmd>>x1>>x2>>y>>color;
+			stringstream ss(line);
+			ss>>cmd>>x1>>x2>>y>>color;
 			if(x2 < x1)
 				std::swap(x1, x2);
 
@@ -94,7 +104,8 @@ int main()
 		{
 			int32_t x1, x2, y1, y2;
 			char color;
-			cin>>cmd>>x1>>x2>>y1>>y2>>color;
+			stringstream ss(line);
+			ss>>cmd>>x1>>x2>>y1>>y2>>color;
 			if(x2 < x1)
 				std::swap(x1, x2);
 			if(y2 < y1)
@@ -109,14 +120,18 @@ int main()
 		{
 			int32_t x, y;
 			char color;
-			cin>>cmd>>x>>y>>color;
+			stringstream ss(line);
+			ss>>cmd>>x>>y>>color;
+			bzero(visited, sizeof(visited));
 			FindAndChange(data[x][y], color, x, y);
 		}
 			break;
 		case 'S':
 		{
-			cin>>cmd>>line;
-			cout<<line<<"\n";
+			string file_name;
+			stringstream ss(line);
+			ss>>cmd>>file_name;
+			cout<<file_name<<"\n";
 			for(int32_t y = 1; y <= rows; ++y)
 			{
 				for(int32_t x = 1; x <= cols; ++x)
@@ -133,7 +148,6 @@ int main()
 		}
 			break;
 		default:
-			std::getline(cin, line);
 			break;
 		}
 	}
