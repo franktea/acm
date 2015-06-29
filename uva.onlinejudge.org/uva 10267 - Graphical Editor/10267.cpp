@@ -49,6 +49,8 @@ void FindAndChange(char old_color, char new_color, int32_t x, int32_t y)
 
 int main()
 {
+	cin.sync_with_stdio(false);
+	cout.sync_with_stdio(false);
 	string line;
 	while(std::getline(cin, line))
 	{
@@ -105,7 +107,7 @@ int main()
 			int32_t x1, x2, y1, y2;
 			char color;
 			stringstream ss(line);
-			ss>>cmd>>x1>>x2>>y1>>y2>>color;
+			ss>>cmd>>x1>>y1>>x2>>y2>>color;
 			if(x2 < x1)
 				std::swap(x1, x2);
 			if(y2 < y1)
