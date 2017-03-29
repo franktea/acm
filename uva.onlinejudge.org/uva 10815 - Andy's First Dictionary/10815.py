@@ -1,20 +1,14 @@
 
 def find_first_of_char(index, line):
-    i = index
-    while i < len(line):
+    for i in range(index, len(line)):
         if line[i].isalpha():
             return i
-        else:
-            i += 1
     return len(line)
 
 def find_first_notof_char(index, line):
-    i = index
-    while i < len(line):
+    for i in range(index, len(line)):
         if not line[i].isalpha():
             return i
-        else:
-            i += 1
     return len(line)
 
 def get_words(line, words):
