@@ -24,19 +24,14 @@ def solve(amplitude, frequency):
     for i in range(frequency):
         if i != 0:
             print()
-            print()
         for index, x in enumerate(l):
-            if index != 0:
-                print()
-            print(str(x)*x, end="")
+            print(str(x)*x)
 
 cases = int(input())
 index = 0
 for a, b in get_pair():
     if index > 0:
         print()
-        print()
     index += 1
     solve(a, b)
-
-print()
+    
