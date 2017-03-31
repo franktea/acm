@@ -1,4 +1,6 @@
 
+"""755.py get TLE error, use cpp file"""
+
 c2n = {"A":2, "B":2, "C":2, "D":3, "E":3, "F":3, "G":4, "H":4, "I":4, "J":5, "K":5, "L":5, "M":6, "N":6, "O":6, "P":7, "R":7, "S":7, "T":8, "U":8, "V":8, "W":9, "X":9, "Y":9}
 
 def solve(lines):
@@ -9,9 +11,13 @@ def solve(lines):
             if c.isnumeric():
                 num.append(c)
             elif c.isalpha():
-                num.append(c2n[c])
+                num.append(str(c2n[c]))
+                
+            if len(num) == 3:
+                num.append('-')
 
-        num = ''.join([str(n) for n in num])
+        num = ''.join(num)
+        
         if not num in numbers:
             numbers[num] = 1
         else:
@@ -24,8 +30,7 @@ def solve(lines):
     
     mt.sort()
     for l in mt:
-        out = ''.join([l[:3], '-', l[3:]])
-        print(out, numbers[l])
+        print(l, numbers[l])
         
 
 cases = int(input())
