@@ -35,7 +35,8 @@ class Team:
                 self.played, self.wins, self.ties, self.losses, self.goal_difference,
                 self.scored, self.against)
     
-    def __lt__(self, other):
+    def __gt__(self, other):
+        """按照从大到小排列"""
         if self.points > other.points:
             return True
         elif self.points == other.points:
@@ -75,7 +76,7 @@ class Tournament:
     
     def OutPut(self):
         print(self.__name)
-        teams = sorted([t for t in self.__teams.values()])
+        teams = sorted([t for t in self.__teams.values()], reverse=True)
         for index, team in enumerate(teams):
             print('%d)' % (index + 1), team)
             
