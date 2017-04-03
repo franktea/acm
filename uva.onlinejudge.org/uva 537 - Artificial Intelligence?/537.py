@@ -1,6 +1,7 @@
 
 import re
 
+# 可能会出现负数
 r = re.compile(r'(?P<name>([UPI]))=(?P<value>[\-]?[0-9\.]+)(?P<suffix>[mkM]?)')
 
 suffix_values = {None: 1, 'm': 0.001, 'k': 1000, 'M': 1000000}
