@@ -9,7 +9,9 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <strings.h>
 #include <memory>
+#include <bitset>
 #include <algorithm>
 #include <stdint.h>
 #include <stdlib.h>
@@ -74,6 +76,7 @@ public:
     bool CheckWord(const string& secret, const string& original,
             std::map<char, char>& delta_map)
     {
+        bitset<26> bits(0); // 本次添加的字符中origianal->secret，每个字母出现，就将该位置1
         for(size_t i = 0; i < secret.size(); ++i)
         {
             char sec = secret[i];
@@ -91,12 +94,18 @@ public:
             auto it = delta_map.find(sec);
             if(it == delta_map.end())
             {
-                if(ori2sec[ori-'a'] != 0)
+                if(ori2sec[ori-'a'] != 0) // 每个字符在全局映射中只能被映射一次
+                {
+                    return false;
+                }
+
+                if(bits.test(ori-'a')) // 每个字符在本次尝试中只能被映射一次
                 {
                     return false;
                 }
 
                 delta_map[sec] = ori;
+                bits.set(ori-'a', 1);
             }
             else // added this time
             {
@@ -176,8 +185,8 @@ private:
     const Dict& dict;
     const string& sentence;
     vector<string> secrets;
-    char sec2ori[26];
-    char ori2sec[26];
+    char sec2ori[26]; // 密码字符-->原字符，一一对应
+    char ori2sec[26]; // 原字符-->密码字符，每个字符也只能被一个字符映射
 };
 
 int main()
