@@ -67,6 +67,8 @@ public:
                 {
                     return lhs.size() > rhs.size();
                 });
+        bzero(sec2ori, sizeof(sec2ori));
+        bzero(ori2sec, sizeof(ori2sec));
     }
 
     bool CheckWord(const string& secret, const string& original,
@@ -76,32 +78,37 @@ public:
         {
             char sec = secret[i];
             char ori = original[i];
-            auto it = char_map.find(sec);
-            if(it != char_map.end())
+
+            if(sec2ori[sec-'a'] != 0)
+            {
+                if(sec2ori[sec-'a'] != ori)
+                    return false;
+                else
+                    continue;
+            }
+
+            // now sec2ori[sec-'a'] is 0
+            auto it = delta_map.find(sec);
+            if(it == delta_map.end())
+            {
+                if(ori2sec[ori-'a'] != 0)
+                {
+                    return false;
+                }
+
+                delta_map[sec] = ori;
+            }
+            else // added this time
             {
                 if(it->second != ori)
                     return false;
-            }
-            else
-            {
-                auto it2 = delta_map.find(sec);
-                if(it2 != delta_map.end())
-                {
-                    if(it2->second != ori)
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    delta_map.insert(std::make_pair(sec, ori));
-                }
             }
         }
 
         for(auto it = delta_map.begin(); it != delta_map.end(); ++it)
         {
-            char_map.insert(std::make_pair(it->first, it->second));
+            sec2ori[it->first - 'a'] = it->second;
+            ori2sec[it->second - 'a'] = it->first;
         }
         return true;
     }
@@ -116,7 +123,7 @@ public:
                 if(c == ' ')
                     cout<<c;
                 else
-                    cout<<char_map[c];
+                    cout<<sec2ori[c-'a'];
             }
             cout<<"\n";
             return;
@@ -137,7 +144,8 @@ public:
                 {
                     for(auto it = delta_map.begin(); it != delta_map.end(); ++it)
                     {
-                        char_map.erase(it->first);
+                        sec2ori[it->first - 'a'] = 0;
+                        ori2sec[it->second - 'a'] = 0;
                     }
                 }
                 else
@@ -168,7 +176,8 @@ private:
     const Dict& dict;
     const string& sentence;
     vector<string> secrets;
-    map<char, char> char_map;
+    char sec2ori[26];
+    char ori2sec[26];
 };
 
 int main()
