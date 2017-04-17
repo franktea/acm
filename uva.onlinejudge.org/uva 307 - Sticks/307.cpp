@@ -61,10 +61,8 @@ bool Stick::Recursive(const int32_t index, const int32_t sum, const int32_t leng
         return true;
     }
 
-    int32_t last_slice_length = 0;
-    for(size_t i = 1; i < slices.size(); ++i)
+    for(size_t i = 1; i < slices.size();++i)
     {
-        if(slices[i] == last_slice_length) continue;
         if(0 != index_used[i]) continue;
         if(sum + slices[i] > length) continue;
         if(sum != 0 && indexes[index-1] > i) continue;
@@ -73,21 +71,8 @@ bool Stick::Recursive(const int32_t index, const int32_t sum, const int32_t leng
         if(! Recursive(index+1, sum + slices[i] == length ? 0 : sum + slices[i], length))
         {
             index_used[i] = 0;
-            last_slice_length = slices[i];
-            if(sum == 0)
-            {
-                bool first_longest = true;
-                for(size_t used_index = 1; used_index < i; ++used_index)
-                {
-                    if(! index_used[used_index])
-                    {
-                        first_longest = false;
-                        break;
-                    }
-                }
-                if(first_longest) return false;
-            }
-            if(slices[i] == slices[slices.size()-1]) return false;
+            if(sum == 0) return false;
+            while(i+1 < slices.size() && slices[i+1] == slices[i]) ++i;
         }
         else
             return true;
