@@ -20,7 +20,7 @@ public:
     Stick(int32_t slice_count)
     {
         slices.reserve(slice_count+1);
-        indexes.resize(slice_count+1);
+        indexes.resize(slice_count+1, 0);
         index_used.resize(slice_count+1, 0);
         slices.push_back(0);
     }
@@ -61,11 +61,11 @@ bool Stick::Recursive(const int32_t index, const int32_t sum, const int32_t leng
         return true;
     }
 
-    for(size_t i = 1; i < slices.size();++i)
+    size_t from_index = sum == 0 ? 1 : indexes[index-1] + 1;
+    for(size_t i = from_index; i < slices.size();++i)
     {
-        if(0 != index_used[i]) continue;
-        if(sum + slices[i] > length) continue;
-        if(sum != 0 && indexes[index-1] > i) continue;
+        if(0 != index_used[i] ||
+                sum + slices[i] > length) continue;
         indexes[index] = i;
         index_used[i] = 1;
         if(! Recursive(index+1, sum + slices[i] == length ? 0 : sum + slices[i], length))
