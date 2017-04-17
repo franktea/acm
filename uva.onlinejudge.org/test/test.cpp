@@ -15,7 +15,7 @@ using namespace std;
 // 组合方式的遍历，解空间大小为2**N
 void BackTrack(const vector<int32_t>&v, vector<int32_t>& result, int32_t level)
 {
-	if(level >= v.size() - 1)
+	if(level >= v.size())
 	{
 		for(size_t i = 0; i < result.size(); ++i)\
 			if(result[i] == 1)
@@ -58,12 +58,27 @@ void BackTrack2(const vector<int32_t>& v, vector<int32_t>& visited,
 	}
 }
 
+void print_subset(int n, int* A, int cur)
+{
+	for(int i = 0; i < cur; ++i) cout<<A[i];
+	if(cur > 0) cout<<"\n";
+
+	int s = cur ? A[cur-1]+1 : 0;
+	for(int i = s; i < n; ++i)
+	{
+		A[cur] = i;
+		print_subset(n, A, cur+1);
+	}
+}
+
 int main()
 {
 	vector<int32_t> v = {1, 2, 3, 4, 5};
 	vector<int32_t> visited(v.size(), 0);
 	vector<int32_t> result(v.size(), 0);
+
+	print_subset(v.size(), &v[0], 0);
 	//BackTrack(v, result, 0);
-	BackTrack2(v, visited, result, 0);
+	//BackTrack2(v, visited, result, 0);
 	return 0;
 }
