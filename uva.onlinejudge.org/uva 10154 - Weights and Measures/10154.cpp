@@ -31,7 +31,7 @@ struct Sortby
 
 vector<Turtle> turtles;
 //map<std::pair<int32_t, int32_t>, int32_t> val_map; // save intermediate result here
-vector<unordered_map<int32_t, int32_t>> results;
+vector<map<int32_t, int32_t>> results;
 
 int32_t Val(int32_t index, int32_t capacity)
 {
@@ -60,7 +60,7 @@ int32_t Val(int32_t index, int32_t capacity)
     }
 
     //val_map.insert({std::make_pair(index, capacity), v});
-    results[index].insert(std::make_pair(capacity, v));
+    results[index].emplace(std::pair<int32_t, int32_t>{capacity, v});
     return v;
 }
 
@@ -75,6 +75,12 @@ int main()
     results.resize(turtles.size());
     sort(turtles.begin(), turtles.end(), Sortby());
     cout<<Val(0, -1)<<"\n";
+//    int32_t ct = 0;
+//    for(auto& m: results)
+//    {
+//        ct += m.size();
+//    }
+//    cout<<"totalsize:"<<ct<<endl;
     return 0;
 }
 
