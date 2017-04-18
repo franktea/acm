@@ -9,6 +9,7 @@
 #include <iostream>
 #include <algorithm>
 #include <functional>
+#include <unordered_map>
 #include <map>
 #include <stdint.h>
 
@@ -29,15 +30,19 @@ struct Sortby
 };
 
 vector<Turtle> turtles;
-map<std::pair<int32_t, int32_t>, int32_t> val_map; // save intermediate result here
+//map<std::pair<int32_t, int32_t>, int32_t> val_map; // save intermediate result here
+vector<unordered_map<int32_t, int32_t>> results;
 
 int32_t Val(int32_t index, int32_t capacity)
 {
     if(index == turtles.size()) return 0;
     if(capacity == 0) return 0;
 
-    auto it = val_map.find(std::make_pair(index, capacity));
-    if(it != val_map.end())
+//    auto it = val_map.find(std::make_pair(index, capacity));
+//    if(it != val_map.end())
+//        return it->second;
+    auto it = results[index].find(capacity);
+    if(it != results[index].end())
         return it->second;
 
     int32_t v;
@@ -54,7 +59,8 @@ int32_t Val(int32_t index, int32_t capacity)
             v = max(Val(index+1, capacity), 1+Val(index+1, min(capacity - t.weight, t.strength - t.weight)));
     }
 
-    val_map.insert({std::make_pair(index, capacity), v});
+    //val_map.insert({std::make_pair(index, capacity), v});
+    results[index].insert(std::make_pair(capacity, v));
     return v;
 }
 
@@ -66,6 +72,7 @@ int main()
     {
         turtles.emplace_back(Turtle{w, s});
     }
+    results.resize(turtles.size());
     sort(turtles.begin(), turtles.end(), Sortby());
     cout<<Val(0, -1)<<"\n";
     return 0;
