@@ -2,7 +2,7 @@
  * async_http_client.cpp
  *
  *  Created on: Apr 25, 2017
- *      Author: franktang
+ *      Author: frank
  */
 #include <iostream>
 #include "async_http_client.h"

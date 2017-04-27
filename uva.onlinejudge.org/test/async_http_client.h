@@ -3,7 +3,7 @@
  *  very simple http client class.
  *  make it async to put it into epoll.
  *  Created on: Apr 24, 2017
- *      Author: franktang
+ *      Author: frank
  */
 
 #ifndef _ASYNC_HTTP_CLIENT_H_

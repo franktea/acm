@@ -2,7 +2,7 @@
  * ahttpcli.cpp
  *
  *  Created on: Apr 27, 2017
- *      Author: franktang
+ *      Author: frank
  */
 #include "async_http_client.h"
 #include <iostream>

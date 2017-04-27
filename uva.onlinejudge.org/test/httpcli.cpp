@@ -2,7 +2,7 @@
  * httpcli.cpp
  *
  *  Created on: Apr 24, 2017
- *      Author: franktang
+ *      Author: frank
  */
 #include <stdio.h> /* printf, sprintf */
 #include <stdlib.h> /* exit */
