@@ -25,6 +25,12 @@ int main()
         cout<<"get request eror, ret="<<ret<<endl;
         return 0;
     }
+
+    for(int i = 0; i < 1000; ++i)
+    {
+        poller.ProcessEvents();
+    }
+
     return 0;
 }
 

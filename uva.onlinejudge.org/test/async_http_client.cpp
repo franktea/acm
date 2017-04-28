@@ -33,7 +33,7 @@ int ClientPoller::Init()
 int ClientPoller::ProcessEvents()
 {
     struct epoll_event events[100];
-    int nfds = epoll_wait(epoll_fd_, events, 100, 0); // 0 ms at most
+    int nfds = epoll_wait(epoll_fd_, events, 100, 10); // 0 ms at most
     if(-1 == nfds)
     {
         //TODO: errno
@@ -42,7 +42,7 @@ int ClientPoller::ProcessEvents()
 
     for(int i = 0; i < nfds; ++i)
     {
-
+        cout<<"fd get event:"<<events[i].data.fd<<endl;
     }
 
     return nfds;
@@ -78,10 +78,14 @@ int ClientPoller::GetRequest(std::string host, std::string path)
 
     if(-1 == connect(fd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)))
     {
-        //TODO: errno
-        cout<<"connect, errno:"<<errno<<"\n";
-        return -1;
+        if(errno != EINPROGRESS)
+        {
+            //TODO: errno
+            cout<<"connect, errno:"<<errno<<"\n";
+            return -1;
+        }
     }
 
     // send message
+    return 0;
 }
