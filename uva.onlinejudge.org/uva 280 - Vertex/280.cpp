@@ -6,6 +6,7 @@ frank May 7, 2018
 #include <set>
 #include <vector>
 #include <algorithm>
+#include <string>
 
 using namespace std;
 
@@ -13,52 +14,87 @@ using namespace std;
  * 此题中，每个点默认是不能到达自己的，除非输入中明确指定自己到自己的边。
  */
 
+void split(const std::string& str, const std::string& delimiters,
+    std::vector<std::string>& tokens)
+{
+    // Skip delimiters at beginning.
+    string::size_type lastPos = str.find_first_not_of(delimiters, 0);
+    // Find first "non-delimiter".
+    string::size_type pos = str.find_first_of(delimiters, lastPos);
+
+    while (string::npos != pos || string::npos != lastPos)
+    {
+        // Found a token, add it to the vector.
+        tokens.push_back(str.substr(lastPos, pos - lastPos));
+        // Skip delimiters.  Note the "not_of"
+        lastPos = str.find_first_not_of(delimiters, pos);
+        // Find next "non-delimiter"
+        pos = str.find_first_of(delimiters, lastPos);
+    }
+}
+
 class Graph
 {
 public:
 	Graph(int vc): vertex_count_(vc) {}
-	void AddEdge(int start)
+	void AddEdge(const string& line)
 	{
-		cout<<"start::::"<<start<<"\n";
-		int v;
-		cin>>v;
-		while(v) // v != 0
-		{
-			cout<<"get v:"<<v<<"\n";
+		//cout<<"add edge: "<<line<<"\n";
+		std::vector<string> v;
+		split(line, " ", v);
 
-			edges_[start].insert(v);
-			cin>>v;
+		if(v.empty())
+			return;
+
+		int start = stoi(v[0]);
+
+		for(size_t index = 1; index < v.size(); ++index)
+		{
+			int end = stoi(v[index]);
+			if(end == 0)
+				break;
+
+			//cout<<"add point: "<<start<<", "<<end<<"\n";
+			edges_[start].insert(end);
 		}
 	}
 
-	void Process() // 读取一行
+	void Process(string line) // 读取一行
 	{
-		int vc;
-		cin>>vc;
-		cout<<"====>"<<vc<<"\n";
-		while(vc--)
+		//cout<<"process: "<<line<<"\n";
+		vector<string> v;
+		split(line, " ", v);
+
+		if(v.empty())
+			return;
+
+		int qc = stoi(v[0]);
+		for(size_t index = 1; index < v.size(); ++index)
 		{
-			cout<<"11111"<<"\n";
-			int v;
-			cout<<"22222"<<"\n";
-			cin>>v;
-			cout<<"33333"<<v<<"\n";
-			FindUnreachable(v);
+			int check = stoi(v[index]);
+			FindUnreachable(check);
 		}
 	}
 private:
 	void FindUnreachable(int v) // 找出顶点v不能到达的点
 	{
-		cout<<"FindUnreachable:"<<v<<"\n";
+		//cout<<"FindUnreachable:"<<v<<"\n";
 		visited_.clear();
 		visited_.resize(vertex_count_ + 1, 0);
 		visited_[0] = 1; // 第0个不用
-		DFS(v);
+
+		auto it = edges_.find(v);
+		if(it != edges_.end())
+		{
+			const auto& s = it->second;
+			for(int end: s)
+			{
+				if(0 == visited_[end])
+					DFS(v);
+			}
+		}
 
 		// 每个定点v默认不能到达自己，除非输入中含有(v, v)
-		auto it = edges_.find(v);
-		visited_[v] = it->second.find(v) == it->second.end() ? 0 : 1;
-
 		auto c = std::count(visited_.begin(), visited_.end(), 0);
 		cout<<c;
 		for(size_t i = 1; i < visited_.size(); ++i)
@@ -93,21 +129,34 @@ private:
 
 int main()
 {
-	int vc;
-	cin>>vc;
-	while(vc)
+	string line;
+	while(std::getline(cin, line))
 	{
-		Graph g(vc);
-		int v;
-		cin>>v;
-		while(v)
-		{
-			g.AddEdge(v);
-			cin>>v;
-		}
-		g.Process();
+		if(line.empty())
+			continue;
 
-		cin>>vc;
+		if(line[0] == '0')
+			break;
+
+		int vc = std::stoi(line);
+		Graph g(vc);
+		//cout<<"vc="<<vc<<"\n";
+
+		string l;
+		while(std::getline(cin, l))
+		{
+			if(l.empty())
+				continue;
+
+			if(l[0] == '0')
+				break;
+
+			g.AddEdge(l);
+		}
+
+		string questions;
+		std::getline(cin, questions);
+		g.Process(questions);
 	}
 
 	return 0;
