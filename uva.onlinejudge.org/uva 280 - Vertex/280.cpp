@@ -73,6 +73,7 @@ public:
 		{
 			int check = stoi(v[index]);
 			FindUnreachable(check);
+			//cout<<"------------------:"<<check<<"\n";
 		}
 	}
 private:
@@ -83,18 +84,18 @@ private:
 		visited_.resize(vertex_count_ + 1, 0);
 		visited_[0] = 1; // 第0个不用
 
+		//cout<<"settling: "<<v<<"\n";
+		visited_[v] = 2; // 每个点默认不能到达自己，除非有一个环可以找到自己。所以给起始点设置一个特殊状态
 		auto it = edges_.find(v);
 		if(it != edges_.end())
 		{
-			const auto& s = it->second;
-			for(int end: s)
-			{
-				if(0 == visited_[end])
-					DFS(v);
-			}
+			for(int v2: it->second)
+				DFS(v2);
 		}
 
-		// 每个定点v默认不能到达自己，除非输入中含有(v, v)
+		if(visited_[v] == 2) // 如果结束以后起始点仍为特殊状态，说明起始点不可到达
+			visited_[v] = 0;
+
 		auto c = std::count(visited_.begin(), visited_.end(), 0);
 		cout<<c;
 		for(size_t i = 1; i < visited_.size(); ++i)
@@ -109,15 +110,22 @@ private:
 
 	void DFS(int v)
 	{
+		visited_[v] = 1;
 		auto it = edges_.find(v);
 		if(it != edges_.end())
 		{
-			visited_[it->first] = 1;
 			const auto& s = it->second;
 			for(auto v2: s)
 			{
 				if(0 == visited_[v2])
+				{
+					//cout<<"reached: "<<v2<<"\n";
 					DFS(v2);
+				}
+				else
+				{
+					visited_[v2] = 1; // 起始点被初始化为2，如果碰到起始点，可以改成1
+				}
 			}
 		}
 	}
