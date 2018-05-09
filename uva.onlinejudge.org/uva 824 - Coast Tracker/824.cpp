@@ -97,7 +97,6 @@ void split(const std::string& str, const std::string& delimiters,
     }
 }
 
-
 int main()
 {
 	string line;
