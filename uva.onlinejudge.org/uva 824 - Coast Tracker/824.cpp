@@ -43,7 +43,7 @@ public:
 
 	Direction ScanDirection() const
 	{
-		static const int new_direction[] = {7, 7, 1, 1, 3, 3, 5, 5};
+		static const int new_direction[] = {6, 7, 0, 1, 2, 3, 4, 5};
 		return Direction(new_direction[value_]);
 	}
 private:
