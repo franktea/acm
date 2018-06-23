@@ -4,4 +4,9 @@ i
 bad_Style
 BadStyle
 abcdefghji
-
+string_convert2_integer
+nEERC
+n_e_e_r_c
+5
+_abc
+abc_

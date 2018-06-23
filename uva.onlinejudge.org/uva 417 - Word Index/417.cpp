@@ -2,7 +2,7 @@
  * 417.cpp
  *
  *  Created on: Apr 13, 2017
- *      Author: franktang
+ *      Author: frank
  */
 
 #include <iostream>

@@ -2,7 +2,7 @@
  * 437.cpp
  *  uva 437 - The Tower of Babylon
  *  Created on: Apr 19, 2017
- *      Author: franktang
+ *      Author: frank
  */
 #include <iostream>
 #include <vector>

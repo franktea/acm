@@ -2,7 +2,7 @@
  * 231.cpp
  *  uva 231 - Testing the CATCHER
  *  Created on: Apr 19, 2017
- *      Author: franktang
+ *      Author: frank
  */
 #include <iostream>
 #include <vector>

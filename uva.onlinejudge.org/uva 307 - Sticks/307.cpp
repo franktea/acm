@@ -2,7 +2,7 @@
  * 307.cpp
  *  uva 307 - Sticks
  *  Created on: Apr 12, 2017
- *      Author: franktang
+ *      Author: frank
  */
 
 #include <iostream>

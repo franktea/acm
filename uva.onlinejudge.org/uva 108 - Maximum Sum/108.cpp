@@ -4,7 +4,7 @@
  *  title : Maximum Sum
  *
  *  Created on: Feb 5, 2015
- *      Author: franktang
+ *      Author: frank
  */
 
 #include <iostream>

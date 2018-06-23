@@ -5,7 +5,7 @@ import (
 )
 
 func solve(lineCount int) {
-	arr := make([]int, 0)
+	arr := make([]int, 0, 1000)
 	var sum int = 0
 	for i := 0; i < lineCount; i++ {
 		var number int

@@ -2,7 +2,7 @@
  * 10154.cpp
  *  uva 10154 - Weights and Measures
  *  Created on: Apr 18, 2017
- *      Author: franktang
+ *      Author: frank
  */
 
 #include <vector>

@@ -4,7 +4,7 @@
  *  title : Roman Digititis
  *
  *  Created on: Feb 2, 2015
- *      Author: franktang
+ *      Author: frank
  */
 
 #include <iostream>

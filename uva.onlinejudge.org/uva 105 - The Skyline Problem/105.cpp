@@ -2,7 +2,7 @@
  * 105.cpp
  *  uva 105 - The Skyline Problem
  *  Created on: Feb 11, 2015
- *      Author: franktang
+ *      Author: frank
  */
 
 #include <iostream>

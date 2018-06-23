@@ -2,7 +2,7 @@
  * 482.cpp
  *
  *  Created on: Jun 23, 2017
- *      Author: franktang
+ *      Author: frank
  */
 #include <iostream>
 #include <algorithm>

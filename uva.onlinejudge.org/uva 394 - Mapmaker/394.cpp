@@ -2,7 +2,7 @@
  * 394.cpp
  *
  *  Created on: Jun 14, 2017
- *      Author: franktang
+ *      Author: frank
  */
 #include <iostream>
 #include <stdint.h>

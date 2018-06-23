@@ -2,7 +2,7 @@
  * 843.cpp
  *  uva 843 - Crypt Kicker
  *  Created on: Apr 10, 2017
- *      Author: franktang
+ *      Author: frank
  */
 
 #include <iostream>

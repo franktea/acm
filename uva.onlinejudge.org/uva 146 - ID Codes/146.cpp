@@ -5,7 +5,7 @@
  *
  *  title: ID Codes
  *  Created on: Feb 4, 2015
- *      Author: franktang
+ *      Author: frank
  */
 
 #include <iostream>

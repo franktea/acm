@@ -4,7 +4,7 @@
  *  uva 333 - Recognizing Good ISBNs
  *
  *  Created on: Feb 28, 2015
- *      Author: franktang
+ *      Author: frank
  */
 
 #include <iostream>
