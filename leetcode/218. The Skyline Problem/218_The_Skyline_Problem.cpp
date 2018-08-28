@@ -39,16 +39,17 @@ public:
 		{
 			if(!result_.empty() && result_[result_.size() - 1].x == new_x) // 需要合并结果
 			{
+				//cout<<"=>"<<result_[result_.size() - 1].x<<","<<result_[result_.size() - 1].height<<","<<result_[result_.size() - 1].old_height<<"\n";
 				int old_height = result_[result_.size() - 1].old_height;
-				if(old_height > new_height)
+				result_.erase(result_.end() - 1, result_.end());
+				//cout<<"old_height: "<<old_height<<"\n";
+				if(new_height != old_height)
 				{
-					result_.erase(result_.end() - 1, result_.end());
 					result_.push_back({new_x, new_height, current_height_});
 				}
 			}
 			else
 			{
-				//cout<<"["<<new_x<<" "<<new_height<<"]";
 				result_.push_back({new_x, new_height, current_height_});
 			}
 
@@ -69,6 +70,20 @@ public:
 		// ended_height == current_height_
 		if(index == current_index_)
 		{
+//			if(!range_heights_.empty())
+//			{
+//				vector<size_t> index_to_remove; // 终点与当前终点相同的区间，全部删掉
+//				for(auto it: range_heights_.begin()->second)
+//				{
+//					if(buildings_[it][1] == buildings_[index][1])
+//						index_to_remove.push_back(it);
+//				}
+//				for(size_t i: index_to_remove)
+//				{
+//					EraseIndex(i);
+//				}
+//			}
+
 			// 找到当前序列中最高的
 			if(range_heights_.empty())
 			{
@@ -79,12 +94,20 @@ public:
 			}
 
 			int new_height = range_heights_.begin()->first;
+			current_index_ = *(range_heights_.begin()->second.begin());
 			if(new_height != current_height_)
 			{
-				result_.push_back({buildings_[index][1], new_height, current_height_});
-				current_height_ = new_height;
+				if(buildings_[index][1] != buildings_[current_index_][1])
+				{
+					result_.push_back({buildings_[index][1], new_height, current_height_});
+					current_height_ = new_height;
+				}
+				else
+				{
+					result_.push_back({buildings_[index][1], 0, current_height_});
+					current_height_ = new_height;
+				}
 			}
-			current_index_ = *(range_heights_.begin()->second.begin());
 		}
 	}
 private:
@@ -113,7 +136,7 @@ class Solution {
 		bool ending; // 是否终点
 		bool operator<(const XValue& another) const
 		{
-			return this->x < another.x;
+			return (this->x < another.x) || (this->x == another.x && int(this->ending) > int(another.ending));
 		}
 	};
 public:
@@ -125,27 +148,29 @@ public:
     	std::vector<XValue> xvalues;
     	for(size_t i = 0; i < buildings.size(); ++i)
     	{
-    		xvalues.emplace_back(XValue{buildings[i][0], i, false});
-    		xvalues.emplace_back(XValue{buildings[i][1], i, true});
+    		xvalues.push_back(XValue{buildings[i][0], i, false});
+    		xvalues.push_back(XValue{buildings[i][1], i, true});
     	}
     	std::sort(xvalues.begin(), xvalues.end());
 
     	vector<KeyPoint> result;
     	CurrentRanges cr(buildings, result);
-    	for(const XValue& xv: xvalues)
+    	//for(const XValue& xv: xvalues)
+    	for(size_t i = 0; i < xvalues.size(); ++i)
     	{
-    		//cout<<"point index = "<<xv.index;
+    		const XValue& xv = xvalues[i];
+    		cout<<"point index = "<<xv.index;
     		if(xv.ending)
     		{
     			cr.RangeEnd(xv.index);
-    			//cout<<" ending, ";
+    			cout<<" ending, ";
     		}
     		else
     		{
     			cr.RangeBegin(xv.index);
-    			//cout<<" begin, ";
+    			cout<<" begin, ";
     		}
-    		//cout<<"x = "<<xv.x<<"\n";
+    		cout<<"x = "<<xv.x<<"\n";
     	}
 
     	vector<pair<int, int>> v;
@@ -160,9 +185,9 @@ public:
 int main()
 {
 	Solution s;
-	vector<vector<int>> buildings = //{ {2, 9, 10}, {3, 7, 15}, {5, 12, 12}, {15, 20, 10}, {19, 24, 8} };
+	vector<vector<int>> buildings = // { {2, 9, 10}, {3, 7, 15}, {5, 12, 12}, {15, 20, 10}, {19, 24, 8} };
 		//{ {0, 2, 3}, {2, 5, 3} };
-		{{2, 4, 5}, {2, 4, 7}, {2, 4, 6}};
+		{{2, 4, 7}, {2, 4, 5}, {2, 4, 6}};
 	auto&& v = s.getSkyline(buildings);
 	for(const auto& p: v)
 	{
