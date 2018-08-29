@@ -28,9 +28,8 @@ public:
 	ScanResult(const vector<XPoint>& sorted_points, const vector<vector<int>>& buildings):
 		sorted_points_(sorted_points), buildings_(buildings) {}
 
-	vector<pair<int, int>> Scan()
+	void Scan(vector<pair<int, int>>& result)
 	{
-		vector<pair<int, int>> result;
 		int current_height = 0;
 		int current_id = -1;
 		for(const XPoint& point: sorted_points_)
@@ -106,8 +105,6 @@ public:
 				}
 			}
 		}
-
-		return result;
 	}
 private:
 	void EraseId(int id)
@@ -146,6 +143,7 @@ public:
 		};
 
     	vector<XPoint> sorted_points;
+    	sorted_points.reserve(point_map.size());
     	for(auto it: point_map)
     	{
     		XPoint& p = it.second;
@@ -156,7 +154,9 @@ public:
 
     	ScanResult sr(sorted_points, buildings);
 
-    	return sr.Scan();
+    	vector<pair<int, int>> result;
+    	sr.Scan(result);
+    	return result;
     }
 };
 
