@@ -14,171 +14,149 @@
 
 using namespace std;
 
-struct KeyPoint // 最终的结果，只需要x和height，但是由于有些点要合并，所以需要记住old height
+struct XPoint
 {
 	int x;
-	int height;
-	int old_height;
+	vector<int> begin_ids; // begin range ids
+	vector<int> end_ids; // end range ids
 };
 
-// 从左到右扫描，在上一个扫描的店未结束的区间，全部保存在这样一个数据结构中
-class CurrentRanges
+// 从左到右扫描每个点（包括起始点和结束点），没扫到一个点，将当前有效区间保存起来
+class ScanResult
 {
 public:
-	CurrentRanges(const vector<vector<int>>& buildings, vector<KeyPoint>& result):
-		current_height_(0),
-		current_index_(std::numeric_limits<size_t>::max()),
-		buildings_(buildings),
-		result_(result){}
-public:
-	void RangeBegin(size_t index) // met a new range
+	ScanResult(const vector<XPoint>& sorted_points, const vector<vector<int>>& buildings):
+		sorted_points_(sorted_points), buildings_(buildings) {}
+
+	vector<pair<int, int>> Scan()
 	{
-		int new_x = buildings_[index][0];
-		int new_height = buildings_[index][2];
-		if(new_height > current_height_)
+		vector<pair<int, int>> result;
+		int current_height = 0;
+		int current_id = -1;
+		for(const XPoint& point: sorted_points_)
 		{
-			if(!result_.empty() && result_[result_.size() - 1].x == new_x) // 需要合并结果
+			if(! point.end_ids.empty())
 			{
-				//cout<<"=>"<<result_[result_.size() - 1].x<<","<<result_[result_.size() - 1].height<<","<<result_[result_.size() - 1].old_height<<"\n";
-				int old_height = result_[result_.size() - 1].old_height;
-				result_.erase(result_.end() - 1, result_.end());
-				//cout<<"old_height: "<<old_height<<"\n";
-				if(new_height != old_height)
+				if(! point.begin_ids.empty()) // begin && end
 				{
-					result_.push_back({new_x, new_height, current_height_});
+					for(int id: point.end_ids)
+					{
+						EraseId(id);
+					}
+
+					const int height = buildings_[point.begin_ids[0]][2];
+					if(ranges_.empty() && height != current_height)
+					{
+						result.push_back({point.x, height});
+						current_height = height;
+						current_id = point.begin_ids[0];
+					}
+					else if(height > current_height)
+					{
+						result.push_back({point.x, height});
+						current_height = height;
+						current_id = point.begin_ids[0];
+					}
+
+					for(int id: point.begin_ids)
+					{
+						const int h = buildings_[id][2];
+						ranges_[h].insert(id);
+					}
+				}
+				else // only end
+				{
+					for(int id: point.end_ids)
+					{
+						EraseId(id);
+					}
+
+					if(ranges_.empty())
+					{
+						current_height = 0;
+						current_id = -1;
+						result.push_back({point.x, 0});
+					}
+					else
+					{
+						const int h = ranges_.begin()->first;
+						if(current_height != h)
+						{
+							result.push_back({point.x, h});
+							current_height = h;
+							current_id = * (ranges_.begin()->second.begin());
+						}
+					}
 				}
 			}
-			else
+			else // only begin
 			{
-				result_.push_back({new_x, new_height, current_height_});
-			}
+				int height = buildings_[point.begin_ids[0]][2];
+				if(height > current_height)
+				{
+					result.push_back({point.x, height});
+					current_height = height;
+					current_id = point.begin_ids[0];
+				}
 
-			current_index_ = index;
-			current_height_ = new_height;
+				for(int id: point.begin_ids)
+				{
+					const int h = buildings_[id][2];
+					ranges_[h].insert(id);
+				}
+			}
 		}
-		range_heights_[new_height].insert(index);
+
+		return result;
 	}
-
-	void RangeEnd(size_t index) // some range ended
+private:
+	void EraseId(int id)
 	{
-		EraseIndex(index);
-		if(buildings_[index][2] < current_height_)
+		int h = buildings_[id][2];
+		ranges_[h].erase(id);
+		if(ranges_[h].empty())
 		{
-			return;
-		}
-
-		// ended_height == current_height_
-		if(index == current_index_)
-		{
-//			if(!range_heights_.empty())
-//			{
-//				vector<size_t> index_to_remove; // 终点与当前终点相同的区间，全部删掉
-//				for(auto it: range_heights_.begin()->second)
-//				{
-//					if(buildings_[it][1] == buildings_[index][1])
-//						index_to_remove.push_back(it);
-//				}
-//				for(size_t i: index_to_remove)
-//				{
-//					EraseIndex(i);
-//				}
-//			}
-
-			// 找到当前序列中最高的
-			if(range_heights_.empty())
-			{
-				result_.push_back({buildings_[index][1], 0, current_height_});
-				current_height_ = 0;
-				current_index_ = std::numeric_limits<size_t>::max();
-				return;
-			}
-
-			int new_height = range_heights_.begin()->first;
-			current_index_ = *(range_heights_.begin()->second.begin());
-			if(new_height != current_height_)
-			{
-				if(buildings_[index][1] != buildings_[current_index_][1])
-				{
-					result_.push_back({buildings_[index][1], new_height, current_height_});
-					current_height_ = new_height;
-				}
-				else
-				{
-					result_.push_back({buildings_[index][1], 0, current_height_});
-					current_height_ = new_height;
-				}
-			}
+			ranges_.erase(h);
 		}
 	}
 private:
-	void EraseIndex(size_t index)
-	{
-		auto it = range_heights_.find(buildings_[index][2]);
-		it->second.erase(index);
-		if(it->second.empty())
-		{
-			range_heights_.erase(it);
-		}
-	}
-private:
-	int current_height_; // max height of all ranges now
-	size_t current_index_;
-	std::map<int, std::set<int>, std::greater<int>> range_heights_; // 已高度降序排列的range index
-	const vector<vector<int>>& buildings_; // 所有排序过后的building
-	vector<KeyPoint>& result_;
+	map<int, set<int>, std::greater<int>> ranges_; // height->ids
+	const vector<XPoint>& sorted_points_;
+	const vector<vector<int>>& buildings_;
 };
 
 class Solution {
-	struct XValue // 每个建筑物的起点终点的x坐标排序，然后从小到大扫描
-	{
-		int x;
-		size_t index; // index in the sorted vector
-		bool ending; // 是否终点
-		bool operator<(const XValue& another) const
-		{
-			return (this->x < another.x) || (this->x == another.x && int(this->ending) > int(another.ending));
-		}
-	};
 public:
     vector<pair<int, int>> getSkyline(vector<vector<int>>& buildings)
 	{
-    	// delete duplicate
-    	buildings.erase(unique(buildings.begin(), buildings.end()), buildings.end());
-
-    	std::vector<XValue> xvalues;
-    	for(size_t i = 0; i < buildings.size(); ++i)
+    	map<int, XPoint> point_map;
+    	for(int i = 0; i < buildings.size(); ++i)
     	{
-    		xvalues.push_back(XValue{buildings[i][0], i, false});
-    		xvalues.push_back(XValue{buildings[i][1], i, true});
-    	}
-    	std::sort(xvalues.begin(), xvalues.end());
-
-    	vector<KeyPoint> result;
-    	CurrentRanges cr(buildings, result);
-    	//for(const XValue& xv: xvalues)
-    	for(size_t i = 0; i < xvalues.size(); ++i)
-    	{
-    		const XValue& xv = xvalues[i];
-    		cout<<"point index = "<<xv.index;
-    		if(xv.ending)
-    		{
-    			cr.RangeEnd(xv.index);
-    			cout<<" ending, ";
-    		}
-    		else
-    		{
-    			cr.RangeBegin(xv.index);
-    			cout<<" begin, ";
-    		}
-    		cout<<"x = "<<xv.x<<"\n";
+    		int x1 = buildings[i][0];
+    		int x2 = buildings[i][1];
+    		point_map[x1].x = x1;
+    		point_map[x1].begin_ids.push_back(i);
+    		point_map[x2].x = x2;
+    		point_map[x2].end_ids.push_back(i);
     	}
 
-    	vector<pair<int, int>> v;
-    	for(const KeyPoint& kp: result)
+    	// sort id by height
+    	auto f = [&buildings](const int lhs, const int rhs) {
+    		return buildings[lhs][2] > buildings[rhs][2];
+		};
+
+    	vector<XPoint> sorted_points;
+    	for(auto it: point_map)
     	{
-    		v.push_back({kp.x, kp.height});
+    		XPoint& p = it.second;
+    		sort(p.begin_ids.begin(), p.begin_ids.end(), f);
+    		sort(p.end_ids.begin(), p.end_ids.end(), f);
+    		sorted_points.push_back(p);
     	}
-    	return v;
+
+    	ScanResult sr(sorted_points, buildings);
+
+    	return sr.Scan();
     }
 };
 
@@ -186,8 +164,10 @@ int main()
 {
 	Solution s;
 	vector<vector<int>> buildings = // { {2, 9, 10}, {3, 7, 15}, {5, 12, 12}, {15, 20, 10}, {19, 24, 8} };
-		//{ {0, 2, 3}, {2, 5, 3} };
-		{{2, 4, 7}, {2, 4, 5}, {2, 4, 6}};
+		{ {0, 2, 3}, {2, 5, 3} };
+		 //{{2, 4, 7}, {2, 4, 5}, {2, 4, 6}};
+		//{{2, 4, 70}, {3,8,30}, {6,100,41},{7,15,70},{10,30,102},{15,25,76},{60,80,91},{70,90,72},{85,120,59}};
+		//{{0, 5, 7}, {5, 10, 7}, {5, 10, 12}, {10, 15, 7}, {15, 20, 7}, {15,20, 12}, {20, 25, 7}};
 	auto&& v = s.getSkyline(buildings);
 	for(const auto& p: v)
 	{
