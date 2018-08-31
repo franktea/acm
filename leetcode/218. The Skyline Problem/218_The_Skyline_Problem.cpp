@@ -14,10 +14,11 @@
 
 using namespace std;
 
+// 从左到右每一个点，排序后逐个扫描。
 struct XPoint
 {
 	int x;
-	vector<int> begin_ids; // begin range ids
+	vector<int> begin_ids; // begin range ids，id就是在某个range在原始数组中的下标
 	vector<int> end_ids; // end range ids
 };
 
@@ -28,7 +29,7 @@ public:
 	ScanResult(const vector<XPoint>& sorted_points, const vector<vector<int>>& buildings):
 		sorted_points_(sorted_points), buildings_(buildings) {}
 
-	void Scan(vector<pair<int, int>>& result)
+	void Scan(vector<pair<int, int>>& result) // result是返回的结果
 	{
 		int current_height = 0;
 		int current_id = -1;
@@ -36,7 +37,7 @@ public:
 		{
 			if(! point.end_ids.empty())
 			{
-				if(! point.begin_ids.empty()) // begin && end
+				if(! point.begin_ids.empty()) // begin && end，既是某些区间的起点，又是某些区间的终点
 				{
 					for(int id: point.end_ids)
 					{
@@ -63,7 +64,7 @@ public:
 						ranges_[h].insert(id);
 					}
 				}
-				else // only end
+				else // only end，仅仅是某些区间的终点，不是任何区间的起点
 				{
 					for(int id: point.end_ids)
 					{
@@ -88,7 +89,7 @@ public:
 					}
 				}
 			}
-			else // only begin
+			else // only begin，仅仅是某些区间的起点，不是任何区间的终点
 			{
 				int height = buildings_[point.begin_ids[0]][2];
 				if(height > current_height)

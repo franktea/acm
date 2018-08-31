@@ -13,8 +13,10 @@
 
 using namespace std;
 
+//用栈解析合法的区间，再将区间合并，从而求得最长的区间
+
 class Solution {
-	struct Range
+	struct Range // 作为结果的区间
 	{
 		int start;
 		int ending;
@@ -29,13 +31,13 @@ class Solution {
 		}
 
 		// make sure *this < another
-		bool OverLap(const Range& another) const
+		bool OverLap(const Range& another) const // 判断区间是否重叠。由于最后的结果是排序的，所以*this < another
 		{
 			return (this->ending + 1 == another.start) ||
 					(this->ending > another.ending);
 		}
 
-		void Merge(const Range& another)
+		void Merge(const Range& another) // 合并区间
 		{
 			this->ending = std::max(this->ending, another.ending);
 		}
