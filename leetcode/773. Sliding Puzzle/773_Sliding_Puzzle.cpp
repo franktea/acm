@@ -104,31 +104,28 @@ struct Node
 		{
 			const int x = x_0 + dx[i];
 			const int y = y_0 + dy[i];
-			cout<<this->ToString()<<"=====>"<<dx[i]<<", "<<dy[i]<<":::::"<<x<<","<<y<<"\n";
+			//cout<<this->ToString()<<"=====>"<<dx[i]<<", "<<dy[i]<<":::::"<<x<<","<<y<<"\n";
 
 			if(x >= 0 && x < 2 && y >= 0 && y < 3)
 			{
 				Node temp_node = *this;
-//				swap(temp_node.arr[temp_node.x_0][temp_node.y_0], temp_node.arr[x][y]);
-//				temp_node.x_0 = x;
-//				temp_node.y_0 = y;
 				temp_node.depth = this->depth + 1;
 				temp_node.MoveTo(x, y);
 
-				cout<<":::::::::::::"<<this->ToString()<<"\n";
-				cout<<"::::::::temp:"<<temp_node.ToString()<<"\n";
+				//cout<<":::::::::::::"<<this->ToString()<<"\n";
+				//cout<<"::::::::temp:"<<temp_node.ToString()<<"\n";
 
 				const string key = temp_node.Key();
 				if(visited.find(key) ==  visited.end())
 				{
-					cout<<"1111111111111"<<this->ToString()<<"\n";
+					//cout<<"1111111111111"<<this->ToString()<<"\n";
 					q.push(temp_node);
-					cout<<"2222222222222"<<this->ToString()<<"\n";
+					//cout<<"2222222222222"<<this->ToString()<<"\n";
 					visited.insert(key);
-					cout<<"3333333333333"<<this->ToString()<<"\n";
+					//cout<<"3333333333333"<<this->ToString()<<"\n";
 				}
 
-				cout<<",,,,,,,,,,,,,"<<this->ToString()<<"\n";
+				//cout<<",,,,,,,,,,,,,"<<this->ToString()<<"\n";
 			}
 		}
 	}
@@ -143,7 +140,7 @@ public:
 
     	unordered_set<string> visited; // key of visited nodes
 
-    	queue<Node> nodes;
+    	queue<Node> nodes; // 此处改成list会出现莫名其妙的错误
     	nodes.push(root);
     	visited.insert(root.Key());
 
@@ -167,9 +164,10 @@ public:
 int main()
 {
 	Solution* ps = new Solution;
-	vector<vector<int>> board = {{1, 2, 3}, {4, 0, 5}};
+	vector<vector<int>> board = //{{1, 2, 3}, {4, 0, 5}};
 		//{{4, 1, 2}, {5, 0, 3}};
 		//{{3, 2, 4}, {1, 5, 0}};
+		{{3,0,5},{4,2,1}};
 	int ret = ps->slidingPuzzle(board);
 	cout<<"ret="<<ret<<"\n";
 	return 0;
