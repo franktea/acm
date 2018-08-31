@@ -113,7 +113,7 @@ struct Node
 				temp_node.MoveTo(x, y);
 
 				//cout<<":::::::::::::"<<this->ToString()<<"\n";
-				//cout<<"::::::::temp:"<<temp_node.ToString()<<"\n";
+				cout<<"::::::::temp:"<<temp_node.ToString()<<"\n";
 
 				const string key = temp_node.Key();
 				if(visited.find(key) ==  visited.end())
