@@ -16,5 +16,7 @@ TEST_CASE("test bit field")
 {
 	BoardStage bs;
 	REQUIRE(sizeof(bs) == 4);
+	bs.Set(vector<vector<int>> {{1, 2, 3}, {4, 0, 5}});
+	cout<<bs.Value()<<"\n";
 }
 

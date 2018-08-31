@@ -32,13 +32,38 @@ typedef struct
 
 class BoardStage
 {
+	typedef union
+	{
+		BoardData data;
+		int value;
+	}SlideField;
 public:
 	void Set(const vector<vector<int>>& init)
 	{
+		BoardData& data = fields.data;
+		data.s00 = init[0][0];
+		data.s01 = init[0][1];
+		data.s02 = init[0][2];
+		data.s10 = init[1][0];
+		data.s11 = init[1][1];
+		data.s12 = init[1][2];
 
+		for(int x = 0; x < 2; ++x)
+			for(int y = 0; y < 3; ++y)
+				if(init[x][y] == 0)
+				{
+					data.x0 = x;
+					data.y0 = y;
+					break;
+				}
+	}
+
+	int Value() const
+	{
+		return fields.value;
 	}
 private:
-	BoardData data;
+	SlideField fields;
 };
 
 
