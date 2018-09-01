@@ -8,6 +8,7 @@
 
 using namespace std;
 
+// 做对了，对递归的理解加深了
 
 // Definition for a binary tree node.
 struct TreeNode {
