@@ -10,7 +10,8 @@
 
 #include <vector>
 #include <unordered_set>
-#include <list>
+#include <queue>
+#include <iostream>
 using namespace std;
 
 
@@ -40,6 +41,8 @@ class BoardStage
 public:
 	void Set(const vector<vector<int>>& init)
 	{
+		this->depth = 0;
+
 		BoardData& data = fields.data;
 		data.s00 = init[0][0];
 		data.s01 = init[0][1];
@@ -58,13 +61,118 @@ public:
 				}
 	}
 
+	int GetData(int x, int y)
+	{
+		const BoardData& data = fields.data;
+		vector<vector<std::function<int()>>> fv = { {[&data](){ return data.s00; },
+				[&data](){ return data.s01; },
+				[&data](){ return data.s02; } },
+				{[&data](){ return data.s10; },
+				[&data](){ return data.s11; },
+				[&data](){ return data.s12; } } };
+		return fv[x][y]();
+	}
+
+	void SetData(int x, int y, int v)
+	{
+		BoardData& data = fields.data;
+		vector<vector<std::function<void(int)>>> fv = { {[&data](int v){ data.s00 = v; },
+				[&data](int v){ data.s01 = v; },
+				[&data](int v){ data.s02 = v; } },
+				{[&data](int v){ data.s10 = v; },
+				[&data](int v){ data.s11 = v; },
+				[&data](int v){ data.s12 = v; } } };
+		fv[x][y](v);
+	}
+
 	int Value() const
 	{
 		return fields.value;
 	}
+
+	bool IsTarget() const
+	{
+		static const BoardData target = {1, 2, 3, 4, 5, 0, 1, 2};
+		return 0 == memcmp(&(this->fields.data), &target, sizeof(BoardData));
+	}
+
+	int Depth() const
+	{
+		return depth;
+	}
+
+	BoardStage Child(int direction) // 0 <= direction < 4
+	{
+		BoardStage result;
+		result.fields.value = 0;
+		if(direction < 0 || direction >= 4)
+		{
+			return result;
+		}
+
+		const int delta_x[] = {1, 0, -1, 0};
+		const int delta_y[] = {0, -1, 0, 1};
+
+		const BoardData& data = fields.data;
+		const int x = data.x0 + delta_x[direction];
+		const int y = data.y0 + delta_y[direction];
+		if(x < 0 || x >= 2 || y < 0 || y >= 3)
+		{
+			return result;
+		}
+
+		result = *this;
+		result.depth = this->depth + 1;
+		BoardData& child_data = result.fields.data;
+		result.SetData(data.x0, data.y0, result.GetData(x, y));
+		result.SetData(x, y, 0);
+		child_data.x0 = x;
+		child_data.y0 = y;
+		return result;
+	}
 private:
 	SlideField fields;
+	int depth;
 };
 
+class Solution
+{
+public:
+    int slidingPuzzle(vector<vector<int>>& board)
+    {
+    	BoardStage root;
+    	root.Set(board);
+
+    	std::unordered_set<int> visited;
+    	std::queue<BoardStage> unvisited; // as a queue 为什么这里用list就不行了？用list是一个错误的队列，貌似不是先进先出
+    	unvisited.push(root);
+    	visited.insert(root.Value());
+
+    	while(! unvisited.empty())
+    	{
+    		BoardStage& head = unvisited.front();
+    		unvisited.pop();
+
+    		//cout<<head.Value()<<"\n";
+
+    		if(head.IsTarget())
+    		{
+    			return head.Depth();
+    		}
+
+    		for(int direction = 0; direction < 4; ++ direction)
+    		{
+    			BoardStage child = head.Child(direction);
+    			if(child.Value() && (visited.find(child.Value()) == visited.end()))
+    			{
+    				unvisited.push(child);
+    				visited.insert(child.Value());
+    			}
+    		}
+    	}
+
+    	return -1;
+    }
+};
 
 #endif /* LEETCODE_773__SLIDING_PUZZLE_BIT_FIELD_H_ */
