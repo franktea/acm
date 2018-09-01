@@ -12,8 +12,12 @@
 #include <list> // as stack
 #include <algorithm>
 #include <queue>
+#include <set>
 
 using namespace std;
+
+// 对于输入{{3,0,5},{4,2,1}};
+// gcc的结果不对，但是clang是对的，原因未知!
 
 // 广度优先
 
@@ -23,112 +27,78 @@ const int dy[] = {0, -1, 0, 1};
 
 const char dest[][3] = { {1, 2, 3}, {4, 5, 0}};
 
-struct Node
+class Node
 {
-	int depth; // 树的第几层，如果得到最终解，也即需要输出的步数
-	char arr[2][3];
-	int x_0; // x pos of item 0
-	int y_0;
-
-	Node(int d, const vector<vector<int>>& board)
+public:
+	Node()
 	{
-		depth = d;
-		for(int x = 0; x < 2; ++x)
-			for(int y = 0; y < 3; ++y)
-				arr[x][y] = char(board[x][y]);
-
-		FindZero();
+		memset(this, 0, sizeof(Node));
 	}
 
-	Node(const Node& another)
+	void Set(const vector<vector<int>>& board)
 	{
-		this->depth = another.depth;
-		//memcpy(this->arr, another.arr, sizeof(this->arr));
+		depth_ = 0;
 		for(int x = 0; x < 2; ++x)
 			for(int y = 0; y < 3; ++y)
-				arr[x][y] = another.arr[x][y];
-		this->x_0 = another.x_0;
-		this->y_0 = another.y_0;
-	}
-
-	void FindZero()
-	{
-		for(int x = 0; x < 2; ++x)
-			for(int y = 0; y < 3; ++y)
-				if(arr[x][y] == 0)
+			{
+				data_[x][y] = char(board[x][y]);
+				if(data_[x][y] == 0)
 				{
-					x_0 = x;
-					y_0 = y;
-					return;
+					x0_ = x;
+					y0_ = y;
 				}
-	}
-
-	string ToString() const
-	{
-		string result = std::to_string(depth) + ",";
-		for(int x = 0; x < 2; ++x)
-			for(int y = 0; y < 3; ++y)
-				result.append(std::to_string(int(arr[x][y])));
-		result.push_back('_');
-		result.append(std::to_string(int(x_0)) + "," + std::to_string(int(y_0)));
-		return result;
-	}
-
-	bool Check()
-	{
-		return 0 == memcmp(arr, dest, sizeof(dest));
-	}
-
-	void MoveTo(int x, int y)
-	{
-		arr[x_0][y_0] = arr[x][y];
-		arr[x][y] = 0;
-		x_0 = x;
-		y_0 = y;
+			}
 	}
 
 	string Key() const
 	{
+		//return string(&data_[0][0], &data_[0][0] + 6);
 		string result;
 		for(int x = 0; x < 2; ++x)
 			for(int y = 0; y < 3; ++y)
-				result.append(std::to_string(int(arr[x][y])));
-		//return string(&arr[0][0], &arr[1][3]);
+				result.append(std::to_string(int(data_[x][y])));
 		return result;
 	}
 
-	// enqueue unvisited children into a queue
-	void EnqueueChildren(queue<Node>& q, unordered_set<string>& visited) const
+	bool IsTarget()
 	{
-		for(int i = 0;i < 4; ++i)
-		{
-			const int x = x_0 + dx[i];
-			const int y = y_0 + dy[i];
-			//cout<<this->ToString()<<"=====>"<<dx[i]<<", "<<dy[i]<<":::::"<<x<<","<<y<<"\n";
-
-			if(x >= 0 && x < 2 && y >= 0 && y < 3)
-			{
-				Node temp_node = *this;
-				temp_node.depth = this->depth + 1;
-				temp_node.MoveTo(x, y);
-
-				//cout<<":::::::::::::"<<this->ToString()<<"\n";
-				cout<<"::::::::temp:"<<temp_node.ToString()<<"\n";
-
-				const string key = temp_node.Key();
-				if(visited.find(key) ==  visited.end())
-				{
-					//cout<<"1111111111111"<<this->ToString()<<"\n";
-					q.push(temp_node);
-					//cout<<"2222222222222"<<this->ToString()<<"\n";
-					visited.insert(key);
-					//cout<<"3333333333333"<<this->ToString()<<"\n";
-				}
-
-				//cout<<",,,,,,,,,,,,,"<<this->ToString()<<"\n";
-			}
-		}
+		return 0 == memcmp(data_, dest, sizeof(dest));
 	}
+
+	Node Child(int direction)
+	{
+		Node child;
+		int x = x0_ + dx[direction];
+		int y = y0_ + dy[direction];
+		if(x < 0 || x >= 2 || y < 0 || y >= 3)
+		{
+			return child;
+		}
+
+		child = *this;
+		++child.depth_;
+		std::swap(child.data_[x0_][y0_], child.data_[x][y]);
+		child.x0_ = x;
+		child.y0_ = y;
+
+		return child;
+	}
+
+	int Depth() const
+	{
+		return depth_;
+	}
+
+	bool InValid() const
+	{
+		static const char uninited[2][3] = {{0, 0, 0}, {0, 0, 0}};
+		return 0 == memcmp(data_, uninited, sizeof(data_));
+	}
+private:
+	char data_[2][3];
+	int depth_;
+	int x0_;
+	int y0_;
 };
 
 
@@ -136,25 +106,39 @@ class Solution {
 public:
     int slidingPuzzle(vector<vector<int>>& board)
     {
-    	Node root(0, board);
+    	Node root;
+    	root.Set(board);
 
-    	unordered_set<string> visited; // key of visited nodes
+    	std::queue<Node> unvisited;
+    	std::set<string> visited;
 
-    	queue<Node> nodes; // 此处改成list会出现莫名其妙的错误
-    	nodes.push(root);
+    	unvisited.push(root);
     	visited.insert(root.Key());
 
-    	while(! nodes.empty())
+    	while(! unvisited.empty())
     	{
-    		Node& node = nodes.front();
-    		nodes.pop();
+    		Node& head = unvisited.front();
+    		unvisited.pop();
 
-    		cout<<"------------------------------processing: "<<node.ToString()<<"\n";
+    		cout<<head.Key()<<"\n";
 
-    		if(node.Check())
-    			return node.depth;
+    		if(head.IsTarget())
+    			return head.Depth();
 
-    		node.EnqueueChildren(nodes, visited);
+    		for(int direction = 0; direction < 4; ++direction)
+    		{
+    			Node child = head.Child(direction);
+    			if(child.InValid())
+    				continue;
+
+    			const string key = child.Key();
+    			if(visited.find(key) != visited.end())
+    				continue;
+
+    			unvisited.push(child);
+    			visited.insert(key);
+    			cout<<"adding:"<<key<<"\n";
+    		}
     	}
 
     	return -1;
@@ -168,6 +152,7 @@ int main()
 		//{{4, 1, 2}, {5, 0, 3}};
 		//{{3, 2, 4}, {1, 5, 0}};
 		{{3,0,5},{4,2,1}};
+		//{{1, 2, 3}, {5, 4, 0}};
 	int ret = ps->slidingPuzzle(board);
 	cout<<"ret="<<ret<<"\n";
 	return 0;
