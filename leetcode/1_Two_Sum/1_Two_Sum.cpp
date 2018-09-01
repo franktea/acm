@@ -9,6 +9,8 @@
 #include <vector>
 using namespace std;
 
+// 先排序再查找的方法，没那么简单，要考虑到有重复元素的情况，得使用stable_sort
+
 class Solution {
 public:
     vector<int> twoSum(vector<int>& nums, int target) {
@@ -20,12 +22,14 @@ public:
     	}
     	auto f = [](const std::pair<int, int>& p1, const std::pair<int, int>& p2) { return p1.second < p2.second; };
 
-        std::sort(sorted.begin(), sorted.end(), f);
+        std::stable_sort(sorted.begin(), sorted.end(), f);
 
         for(auto it = sorted.begin(); it != sorted.end(); ++it)
         {
-        	int v = target - *it->second;
-        	auto it2 = std::lower_bound(it, sorted.end(), v, f);
+        	int v = target - it->second;
+
+        	// lower_bound的第三个参数必须与*it类型相同，由于此处first不重要，只比较second，所以构造一个临时的即可
+        	auto it2 = std::lower_bound(it + 1, sorted.end(), std::pair<int, int>(0, v), f);
         	if(it2 != sorted.end() && it2->second == v)
         	{
         		int a = it->first;
