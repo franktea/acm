@@ -10,6 +10,8 @@
 
 using namespace std;
 
+// easy标签，但是写起来没那么easy，状态差？
+
 //Definition for singly-linked list.
 struct ListNode {
 	int val;
@@ -37,11 +39,10 @@ public:
 
     	while(l1 || l2)
     	{
-    		ListNode* p1 = l1;
-    		ListNode* p2 = l2;
-
-    		if(p1 && p2)
+    		if(l1 && l2)
     		{
+        		ListNode* p1 = l1;
+        		ListNode* p2 = l2;
     			if(p1->val < p2->val)
     			{
     				l1 = p1->next;
@@ -55,17 +56,15 @@ public:
     				f(p2);
     			}
     		}
-    		else if(p1) // p1 != null && p2 = null
+    		else if(l1) // p1 != null && p2 = null
     		{
-				l1 = p1->next;
-				p1->next = nullptr;
-				f(p1);
+				f(l1);
+				l1 = nullptr;
     		}
-    		else if(p2) // p1 == null && p2 != null
+    		else if(l2) // p1 == null && p2 != null
     		{
-				l2 = p2->next;
-				p2->next = nullptr;
-				f(p2);
+				f(l2);
+				l2 = nullptr;
     		}
     	}
 
