@@ -8,6 +8,8 @@
 
 using namespace std;
 
+// 用递归的方法，实现简单，性能不错
+
 static int fast = []() {ios_base::sync_with_stdio(0); cin.tie(0); cout.tie(0); return 0; }();
 
 //Definition for singly-linked list.
