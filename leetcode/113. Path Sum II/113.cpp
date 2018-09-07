@@ -21,7 +21,7 @@ class Solution {
 public:
     vector<vector<int>> pathSum(TreeNode* root, int sum) {
     	object_sum_ = sum;
-    	if(!root)
+    	if(root)
     		DFS(root, 0);
     	return result_;
     }
@@ -50,6 +50,7 @@ private:
     vector<vector<int>> result_;
     vector<int> path_; //当前路径
 };
+static int fast = [](){ios::sync_with_stdio(0);cin.tie(0);cout.tie(0);return 0;}();
 
 int main()
 {
