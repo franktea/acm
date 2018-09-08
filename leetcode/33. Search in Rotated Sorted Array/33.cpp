@@ -13,6 +13,7 @@ using namespace std;
 
 // 既然是要O(LogN)的复杂度，肯定是二分查找。先用二分查找找到数组中最小的元素的位置，
 // 从这个位置，数组被分成了2个排序的区间，在这二个排序的区间中可以用二分查找来找到目标元素
+// 此解法打败了98%的对手
 
 class Solution {
 public:
@@ -39,7 +40,7 @@ public:
     		int min_index = -1; // 数组中最小的元素的下标，即本来排在数组第一个位置的元素下标。
 			int low = 0;
 			int high = nums.size() - 1;
-			while(low < high) // 标准二分搜索算法此处是<=
+			while(low < high) // 标准二分搜索算法此处是<=，但是对于这种搜索不对
 			{
 				int mid = (low + high) / 2;
 				if(nums[mid] > nums[mid+1]) // 第一个nums[n] > nums[n+1]的位置，就是数组的分界点
