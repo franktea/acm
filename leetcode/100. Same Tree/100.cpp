@@ -22,7 +22,7 @@ public:
     	if(!p && !q)
     		return true;
 
-    	if((q && !q) || (!p && q))
+    	if((p && !q) || (!p && q))
     		return false;
 
     	if(p->val != q->val)
