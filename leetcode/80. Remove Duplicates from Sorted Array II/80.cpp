@@ -10,10 +10,9 @@
 
 using namespace std;
 
-// 对于输入1,1,1,1,2,2,3
-// 在几个编译器上得到结果都正确，但是提交死活不正确。
-
 // 思路：循环，每次拷贝一个字符，如果碰到有相同的，则拷贝二个。
+// O(N)的复杂度，但是性能不是很高。
+// 只保证了前n个字符是需要的样子，并没有把不需要的相对移动到后面去
 
 class Solution {
 public:
@@ -24,11 +23,11 @@ public:
         int index = 0;
         while(index < nums.size())
         {
-        	nums[result] = nums[index];
+        	nums[result++] = nums[index]; // 拷贝一个字符
 
         	int second = index + 1;
-        	if(second <= nums.size())
-        		++result;
+        	if(second >= nums.size())
+        		break;
 
         	if(nums[index] == nums[second])
         	{
@@ -40,9 +39,9 @@ public:
         	index = second;
         }
 
-        for(auto&& i: nums)
-        	cout<<i<<", ";
-        cout<<"\n";
+//        for(auto&& i: nums)
+//        	cout<<i<<", ";
+//        cout<<"\n";
 
         return result;
     }
