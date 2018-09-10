@@ -61,6 +61,9 @@ private:
 			while(next_special < patterns.size() && patterns[next_special] != '*' && patterns[next_special] != '?')
 				++next_special;
 
+			if(int(s.length()) - pos < next_special - index)
+				return false;
+
 			for(int i = 0; i < next_special - index; ++i)
 				if(pos + i < s.length() && s[pos + i] != patterns[index + i])
 					return false;
@@ -76,10 +79,10 @@ static int fast=[](){ios::sync_with_stdio(0);cin.tie(0);cout.tie(0);return 0;}()
 int main()
 {
 	Solution* ps = new Solution;
-//	bool ret = ps->isMatch("abbabaaabbabbaababbabbbbbabbbabbbabaaaaababababbbabababaabbababaabbbbbbaaaabababbbaabbbbaabbbbababababbaabbaababaabbbababababbbbaaabbbbbabaaaabbababbbbaababaabbababbbbbababbbabaaaaaaaabbbbbaabaaababaaaabb",
-//			"**aa*****ba*a*bb**aa*ab****a*aaaaaa***a*aaaa**bbabb*b*b**aaaaaaaaa*a********ba*bbb***a*ba*bb*bb**a*b*bb");
-	bool ret = ps->isMatch("a", "ab*");
-	cout<<"ret="<<ret<<"\n";
+	bool ret = ps->isMatch("abbabaaabbabbaababbabbbbbabbbabbbabaaaaababababbbabababaabbababaabbbbbbaaaabababbbaabbbbaabbbbababababbaabbaababaabbbababababbbbaaabbbbbabaaaabbababbbbaababaabbababbbbbababbbabaaaaaaaabbbbbaabaaababaaaabb",
+			"**aa*****ba*a*bb**aa*ab****a*aaaaaa***a*aaaa**bbabb*b*b**aaaaaaaaa*a********ba*bbb***a*ba*bb*bb**a*b*bb");
+	//bool ret = ps->isMatch("a", "ab*");
+	//cout<<"ret="<<ret<<"\n";
 	return 0;
 }
 
