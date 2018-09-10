@@ -11,6 +11,10 @@
 
 using namespace std;
 
+// 用递归的方法。递归的深度就是模式的个数。
+// 将模式分组，每次递归一个模式，按照每个模式可以匹配的全部字符向后移动字符的位置，
+// 如果匹配到最后，模式和字符都用完，则说明匹配成功。
+
 class Solution {
 public:
     bool isMatch(string s, string p) {
@@ -30,17 +34,24 @@ public:
         }
         std::reverse(patterns.begin(), patterns.end()); // 再反序
 
-        for(auto&& s: patterns)
-        	cout<<s<<"\n";
+//        for(auto&& s: patterns)
+//        	cout<<s<<"\n";
 
         return Recurse(s, patterns, 0, 0);
     }
 private:
     bool Recurse(const string& s, const vector<string>& patterns, const int index, const int pos)
     {
-    	cout<<"index="<<index<<", pos="<<pos<<"\n";
+//    	cout<<"index="<<index<<", pos="<<pos<<"\n";
     	if(index == patterns.size() && pos == s.size())
     		return true;
+
+    	// 如果字符串已经匹配完成，但是剩下的模式都是以*结尾，则也算匹配成功
+    	if(pos >= s.size() && index < int(patterns.size()))
+    	{
+    		if(std::all_of(patterns.begin() + index, patterns.end(), [](const string& str){ return str.back() == '*';}))
+    			return true;
+    	}
 
     	if(pos >= s.size() || index >= patterns.size())
     		return false;
@@ -69,7 +80,7 @@ private:
     			while(next_different < s.length() && s[next_different] == pattern[0])
     				++next_different;
 
-    			for(int i = 0; i < next_different - pos; ++i)
+    			for(int i = 0; i <= next_different - pos; ++i)
     				if(Recurse(s, patterns, index + 1, pos + i))
     					return true;
     		}
@@ -78,11 +89,12 @@ private:
     	return false;
     }
 };
+static int fast=[](){ios::sync_with_stdio(0);cin.tie(0);cout.tie(0);return 0;}();
 
 int main()
 {
 	Solution* ps = new Solution;
-	bool ret = ps->isMatch("aab", "c*a*b");
+	bool ret = ps->isMatch("a", "ab*");
 	cout<<"ret="<<ret<<"\n";
 	return 0;
 }
