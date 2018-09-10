@@ -13,6 +13,7 @@
 using namespace std;
 
 // 用递归的方法求组合，用set来去重
+// 用递归的方法，通过了，但是只打败0%的玩家。还有继续减枝优化的空间。也可以尝试非递归的方法
 
 class Solution {
 public:
@@ -24,7 +25,7 @@ public:
     	return result_;
     }
 private:
-    void Recurve(int depth, const vector<int>& nums, int target) // 递归，对于每个元素，存在“选”和“不选”两种状态
+    void Recurve(int depth, const vector<int>& nums, int left) // 递归，对于每个元素，存在“选”和“不选”两种状态，参数left表示距离当前目标和还剩余多少
     {
     	if(depth == arr_.size())
     	{
@@ -36,17 +37,20 @@ private:
     				v.push_back(nums[index]);
     			}
     		}
-    		if(!v.empty() && std::accumulate(v.begin(), v.end(), 0) == target)
+    		if(!v.empty() && left == 0)
     			tmp_.insert(v);
 
     		return;
     	}
 
-    	for(int i = 0; i <= 1; ++i)
-    	{
-    		arr_[depth] = i;
-    		Recurve(depth + 1, nums, target);
-    	}
+		arr_[depth] = 0;
+		Recurve(depth + 1, nums, left);
+
+		if(left < 0) // 减枝，对于当前和已经超过的，直接放弃
+			return;
+
+		arr_[depth] = 1;
+		Recurve(depth + 1, nums, left - nums[depth]);
     }
 private:
     vector<int> arr_;
