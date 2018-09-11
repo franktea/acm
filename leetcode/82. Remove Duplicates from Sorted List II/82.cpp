@@ -9,6 +9,8 @@
 
 using namespace std;
 
+// 居然打败100%，还存在优化的空间，现在是一个O(2N)的算法，可以改成O(N)，但是思路要足够清醒
+
 //Definition for singly-linked list.
 struct ListNode {
 	int val;
@@ -22,37 +24,30 @@ public:
     	if(!head) return head;
 
     	ListNode* tail = head;
+    	ListNode* last_second = nullptr; // 倒数第二个节点，没这个节点就没法实现本题的功能，现在的解法是每次都去计算该值，而不是存起来的，相当于多了一次遍历
     	std::pair<ListNode*, ListNode*> p = FindFirstTwoEqual(tail);
     	while(p.first && p.second)
     	{
-    		for(auto x = p.first; x != p.second->next; x = x->next)
-    		{
-    			cout<<x->val<<", ";
-    		}
-    		cout<<"\n";
+			if(head == p.first)
+			{
+				head = p.second->next;
+			}
+			else
+			{
+				last_second = head;
+				while(last_second->next != p.first)
+					last_second = last_second->next;
 
-    		if(head == p.first)
-    			head = p.second->next;
-
-    		if(tail == p.first)
-    		{
-    			tail->next = p.second->next;
-    			tail = tail->next;
-    		}
-    		else
-    		{
-    			while(tail->next != p.first)
-    				tail = tail->next;
-    			tail->next = p.second->next;
-    			tail = tail->next;
-    		}
-
-    		p = FindFirstTwoEqual(tail);
+				last_second->next = p.second->next;
+			}
+			tail = p.second->next;
+			p = FindFirstTwoEqual(tail);
     	}
 
     	return head;
     }
 private:
+    // 找到连续相等的一串区间，返回该区间的第一个和最后一个
     std::pair<ListNode*, ListNode*> FindFirstTwoEqual(ListNode* head)
 	{
     	if(!head) return {nullptr, nullptr};
@@ -73,12 +68,13 @@ private:
     	return {first, second};
 	}
 };
+static int fast=[](){ios::sync_with_stdio(0);cin.tie(0);cout.tie(0);return 0;}();
 
 int main()
 {
 	using ln = ListNode;
 	Solution* ps = new  Solution;
-	ListNode* n = new ln(1, new ln(2, new ln(2, new ln (2, new ln(2, new ln(5, new ln(3, new ln(3, new ln(3, new ln(3, new ln(4)))))))))));
+	ListNode* n = new ln(1, new ln(2, new ln(2, new ln (2, new ln(2, new ln(3, new ln(3, new ln(3, new ln(3, new ln(4))))))))));
 	ListNode* ret = ps->deleteDuplicates(n);
 	while(ret)
 	{
