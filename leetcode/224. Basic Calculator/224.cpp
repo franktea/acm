@@ -12,6 +12,8 @@
 
 using namespace std;
 
+// 思路不是很清晰，下次重新写
+
 enum ItemType {IT_NUMBER, IT_OPERATOR, IT_BARCKET};
 
 struct Item
