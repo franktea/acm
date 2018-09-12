@@ -4,9 +4,13 @@
  *  Created on: Sep 12, 2018
  *      Author: frank
  */
+#include <iostream>
+#include <bitset>
+#include <string>
 
+using namespace std;
 
-// 直接用bitset不对，应该是字节序的问题
+// 用了bitset，小心用法
 
 class Solution {
 public:
@@ -14,10 +18,28 @@ public:
         bitset<32> bs(n);
         for(size_t index = 0; index < 16; ++index)
         {
-            auto tmp = bs[31-index];
+            bool tmp = bs[31-index];
             bs[31-index] = bs[index];
-            bs[index] = tmp;
+            bs.set(index, tmp);
         }
         return bs.to_ulong();
     }
 };
+
+int main()
+{
+	uint32_t n = 43261596;
+
+	Solution* ps = new Solution;
+	cout<<ps->reverseBits(n)<<"\n";
+
+//	cout<<bitset<32>(n).to_string()<<"\n";
+//	cout<<bitset<8>(n%256).to_string()<<"\n";
+//	n /= 256;
+//	cout<<bitset<8>(n%256).to_string()<<"\n";
+//	n /=256;
+//	cout<<bitset<8>(n%256).to_string()<<"\n";
+//	n /= 256;
+//	cout<<bitset<8>(n%256).to_string()<<"\n";
+	return 0;
+}
