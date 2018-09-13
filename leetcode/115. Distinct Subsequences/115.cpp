@@ -7,15 +7,9 @@
 #include <string>
 #include <algorithm>
 #include <iostream>
-#include <unordered_map>
+#include <unordered_set>
 
 using namespace std;
-
-/**
- * 未解决：
- * 遍历，如果遍历到pattern的末尾，说明找到一个匹配。
- * 如果记录了可以访问的状态，则会超时，如果不记录状态，又算不出正确的结果。
- */
 
 struct pairhash {
 public:
@@ -57,25 +51,21 @@ private:
     	if(s[i] == t[j])
     	{
     		auto it = visited_.find({i+1, j+1});
-    		if(it == visited_.end() || it->second == false)
+    		if(it == visited_.end())
     		{
     			ret1 = DFS(i+1, j+1);
-    			visited_.insert({{i+1, j+1}, ret1});
+    			if(! ret1)
+    				visited_.insert({{i+1, j+1}, false});
     		}
-    		else
-    			ret1 = true;
     	}
 
     	bool ret2 = false;
 		auto it = visited_.find({i+1, j});
-		if(it == visited_.end() || it->second == false)
+		if(it == visited_.end())
 		{
 			ret2 = DFS(i+1, j);
-			visited_.insert({{i+1, j}, ret2});
-		}
-		else
-		{
-			ret2 = true;
+			if(!ret2)
+				visited_.insert({{i+1, j}, false});
 		}
 
     	return ret1 || ret2;
