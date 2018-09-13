@@ -13,6 +13,9 @@
 
 using namespace std;
 
+// 深度优先一个个地遍历，用set记录尝试失败的位置，打败了100%
+// 如果用hashset来存储会更快
+
 class Solution {
 public:
     bool isInterleave(string s1, string s2, string s3) {
