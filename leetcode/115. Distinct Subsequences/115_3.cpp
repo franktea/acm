@@ -15,6 +15,8 @@ using namespace std;
 // 根据115_2.cpp的方法，采用填充数组的算法;
 // 已经很简单了，但是并未打败100%
 
+// 此题的优化空间：vector的构造，可以用二维数组；每行数据的计算，其实每行只需要计算2个数值，而不是全部算完，这样说来根本不需要表格
+
 class Solution {
 public:
     int numDistinct(string s, string t) {
