@@ -9,6 +9,8 @@
 #include <vector>
 #include <algorithm>
 #include <bitset>
+#include <string>
+#include <sstream>
 
 using namespace std;
 
@@ -17,9 +19,17 @@ class Solution {
 	{
 		int i;
 		int j;
-		int priority;
 		std::vector<char> candinates;
-		Cell(int x, int y):i(x), j(y), priority(0) {}
+		Cell(int x, int y):i(x), j(y){}
+		string ToString() const
+		{
+			std::stringstream ss;
+			ss<<"("<<i<<", "<<j<<"), cands=[";
+			for(int i: candinates)
+				ss<<i<<", ";
+			ss<<"]";
+			return ss.str();
+		}
 	};
 public:
     bool isValidSudoku(vector<vector<char>>& board) {
@@ -38,6 +48,9 @@ public:
     	{
     		for(int j = 0; j < board[0].size(); ++j)
     		{
+    			if(board[i][j])
+    				continue;
+
     			Cell cell(i, j);
     			cells_.push_back(cell);
     			CalcCell(board, cells_.back());
@@ -45,8 +58,11 @@ public:
     	}
 
     	std::sort(cells_.begin(), cells_.end(), [](const Cell& lhs, const Cell& rhs){
-    		return lhs.priority > rhs.priority;
+    		return lhs.candinates.size() < rhs.candinates.size();
     	});
+
+    	for(const Cell& cell: cells_)
+    		cout<<cell.ToString()<<"\n";
 
     	return DFS(board, 0);
 
@@ -78,14 +94,12 @@ private:
     	{
     		if(board[cell.i][c])
     		{
-    			++cell.priority;
-    			bits.set(c);
+    			bits.set(board[cell.i][c]-1);
     		}
 
     		if(board[c][cell.j])
     		{
-    			++cell.priority;
-    			bits.set(c);
+    			bits.set(board[c][cell.j]-1);
     		}
     	}
 
@@ -151,7 +165,8 @@ private:
 
 int main()
 {
-	vector<vector<char>> v = {{'5','3','.','.','7','.','.','.','.'},
+	vector<vector<char>> v = {
+			  {'5','3','.','.','7','.','.','.','.'},
 			  {'6','.','.','1','9','5','.','.','.'},
 			  {'.','9','8','.','.','.','.','6','.'},
 			  {'8','.','.','.','6','.','.','.','3'},
@@ -161,8 +176,8 @@ int main()
 			  {'.','.','.','4','1','9','.','.','5'},
 			  {'.','.','.','.','8','.','.','7','9'}};
 	Solution* ps = new Solution;
-	bool ret = ps->isValidSudoku(v);
-	cout<<"ret="<<ret<<"\n";
+//	bool ret = ps->isValidSudoku(v);
+//	cout<<"ret="<<ret<<"\n";
 	vector<vector<char>> v2 = { {'8','3','.','.','7','.','.','.','.'},
 			  {'6','.','.','1','9','5','.','.','.'},
 			  {'.','9','8','.','.','.','.','6','.'},
@@ -172,6 +187,6 @@ int main()
 			  {'.','6','.','.','.','.','2','8','.'},
 			  {'.','.','.','4','1','9','.','.','5'},
 			  {'.','.','.','.','8','.','.','7','9'} };
-	ret= ps->isValidSudoku(v2);
+	bool ret= ps->isValidSudoku(v2);
 	cout<<"ret="<<ret<<"\n";
 }
