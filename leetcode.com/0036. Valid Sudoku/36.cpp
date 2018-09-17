@@ -11,6 +11,7 @@
 #include <bitset>
 #include <string>
 #include <sstream>
+#include <array>
 
 using namespace std;
 
@@ -37,12 +38,12 @@ public:
     		for(char& c: v)
     			c = c == '.' ? 0 : c - '0';
 
-    	for(vector<char>& v: board)
-    	{
-    		for(char& c: v)
-    			cout<<int(c)<<", ";
-    		cout<<"\n";
-    	}
+//    	for(vector<char>& v: board)
+//    	{
+//    		for(char& c: v)
+//    			cout<<int(c)<<", ";
+//    		cout<<"\n";
+//    	}
 
     	for(int i = 0; i < board.size(); ++i)
     	{
@@ -61,12 +62,19 @@ public:
     		return lhs.candinates.size() < rhs.candinates.size();
     	});
 
-    	for(const Cell& cell: cells_)
-    		cout<<cell.ToString()<<"\n";
+//    	for(const Cell& cell: cells_)
+//    		cout<<cell.ToString()<<"\n";
 
-    	return DFS(board, 0);
+    	bool ret = DFS(board, 0);
 
-    	return true;
+//		for(vector<char>& v: board)
+//		{
+//			for(char& c: v)
+//				cout<<int(c)<<", ";
+//			cout<<"\n";
+//		}
+
+    	return ret;
     }
 private:
     bool DFS(vector<vector<char>>& board, int index)
@@ -118,45 +126,47 @@ private:
     {
     	//check row
     	{
-    		std::bitset<9> bits;
     		const vector<char>& v = board[i];
-    		for(int value: v)
+    		int arr[10] = {0};
+    		for(int c: v)
     		{
-    			if(value && bits[value-1])
+    			if(c && arr[c])
     				return false;
 
-    			if(value)
-    				bits.set(value-1);
+    			if(c)
+    				arr[c] = 1;
     		}
     	}
 
-    	//check column
+    	//check col
     	{
-    		std::bitset<9> bits;
-			for(const vector<char>& v: board)
-			{
-				if(v[j] && bits[v[j]-1])
-					return false;
+    		int arr[10] = {0};
+    		for(const vector<char>& v: board)
+    		{
+    			int c = v[j];
+    			if(c && arr[c])
+    				return false;
 
-				if(v[j])
-					bits.set(v[j]-1);
-			}
+    			if(c)
+    				arr[c] = 1;
+    		}
     	}
 
-    	// check 3x3 sub box
+    	//check sub matrix
     	{
-    		std::bitset<9> sub;
-    		const int sub_row = i / 3;
-    		const int sub_col = j / 3;
-    		for(int row = sub_row; row < sub_row+3; ++row)
+    		int arr[10] = {0};
+    		const int row = i / 3;
+    		const int col = j / 3;
+    		for(int x = 3*row; x < 3*row+3; ++x)
     		{
-    			for(int col = sub_col; col < sub_col+3; ++col)
+    			for(int y = 3*col; y < 3*col+3; ++y)
     			{
-    				if(board[row][col] && sub[board[row][col]-1])
-    					return false;
+    				int c = board[x][y];
+        			if(c && arr[c])
+        				return false;
 
-    				if(board[row][col])
-    					sub.set(board[row][col]-1);
+        			if(c)
+        				arr[c] = 1;
     			}
     		}
     	}
@@ -166,22 +176,24 @@ private:
 private:
     vector<Cell> cells_; // empty cells to fill
 };
+static int fast=[](){ios::sync_with_stdio(0);cin.tie(0);cout.tie(0);return 0;}();
 
 int main()
 {
-	vector<vector<char>> v = {
-			  {'5','3','.','.','7','.','.','.','.'},
-			  {'6','.','.','1','9','5','.','.','.'},
-			  {'.','9','8','.','.','.','.','6','.'},
-			  {'8','.','.','.','6','.','.','.','3'},
-			  {'4','.','.','8','.','3','.','.','1'},
-			  {'7','.','.','.','2','.','.','.','6'},
-			  {'.','6','.','.','.','.','2','8','.'},
-			  {'.','.','.','4','1','9','.','.','5'},
-			  {'.','.','.','.','8','.','.','7','9'}};
+	bool ret;
 	Solution* ps = new Solution;
-	bool ret = ps->isValidSudoku(v);
-	cout<<"ret="<<ret<<"\n";
+//	vector<vector<char>> v = {
+//			  {'5','3','.','.','7','.','.','.','.'},
+//			  {'6','.','.','1','9','5','.','.','.'},
+//			  {'.','9','8','.','.','.','.','6','.'},
+//			  {'8','.','.','.','6','.','.','.','3'},
+//			  {'4','.','.','8','.','3','.','.','1'},
+//			  {'7','.','.','.','2','.','.','.','6'},
+//			  {'.','6','.','.','.','.','2','8','.'},
+//			  {'.','.','.','4','1','9','.','.','5'},
+//			  {'.','.','.','.','8','.','.','7','9'}};
+//	ret = ps->isValidSudoku(v);
+//	cout<<"ret="<<ret<<"\n";
 //	vector<vector<char>> v2 = {
 //			  {'8','3','.','.','7','.','.','.','.'},
 //			  {'6','.','.','1','9','5','.','.','.'},
@@ -194,4 +206,15 @@ int main()
 //			  {'.','.','.','.','8','.','.','7','9'} };
 //	ret= ps->isValidSudoku(v2);
 //	cout<<"ret="<<ret<<"\n";
+	vector<vector<char>> v3 = {{'.','.','.','.','.','.','.','.','.'},
+			{'.','.','.','.','.','.','.','.','.'},
+			{'.','.','.','.','.','.','.','.','.'},
+			{'.','.','.','.','.','.','.','.','.'},
+			{'.','.','.','.','.','.','.','.','.'},
+			{'.','.','.','.','.','.','.','.','.'},
+			{'.','.','.','.','.','.','.','.','.'},
+			{'.','.','.','.','.','.','.','.','.'},
+			{'.','.','.','.','.','.','.','.','.'}};
+	ret= ps->isValidSudoku(v3);
+	cout<<"ret="<<ret<<"\n";
 }
