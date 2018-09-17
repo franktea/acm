@@ -75,9 +75,9 @@ private:
     		return true;
 
     	Cell& cell = cells_[index];
-    	for(int x = 0; x < cell.candinates.size(); ++x)
+    	for(int value: cell.candinates)
     	{
-    		board[cell.i][cell.j] = cell.candinates[x];
+    		board[cell.i][cell.j] = value;
     		if(! Check(board, cell.i, cell.j))
     			continue;
 
@@ -87,6 +87,7 @@ private:
     		board[cell.i][cell.j] = 0;
     	}
 
+    	board[cell.i][cell.j] = 0;
     	return false;
     }
 
@@ -125,7 +126,7 @@ private:
     				return false;
 
     			if(value)
-    				bits.set(value);
+    				bits.set(value-1);
     		}
     	}
 
