@@ -11,6 +11,8 @@
 
 using namespace std;
 
+// 用模拟的方法对了，只打败4%，难道是没有加fast的原因？对这题没兴趣，先不管了。
+
 class Solution {
 public:
     string convert(string s, int numRows) {
@@ -32,12 +34,14 @@ public:
     			++y;
     			if(y >= numRows)
     			{
-    				y-=2;
     				++x;
-    				if(y < 0)
+    				y -= 2;
+    				if(y > 0)
+    					direction = 1;
+    				else // y <= 0;
     					y = 0;
-    				direction = 1;
     			}
+
     		}
     		else // move up
     		{
@@ -51,12 +55,12 @@ public:
     		}
     	}
 
-    	for(vector<char>& v: matrix)
-    	{
-    		for(char c: v)
-    			cout<<c;
-    		cout<<"\n";
-    	}
+//    	for(vector<char>& v: matrix)
+//    	{
+//    		for(char c: v)
+//    			cout<<c;
+//    		cout<<"\n";
+//    	}
 
     	string result;
     	result.reserve(s.length());
@@ -77,9 +81,9 @@ public:
 int main()
 {
 	Solution* ps = new Solution;
-	string ret = ps->convert("PAYPALISHIRING", 4);
+	string ret = ps->convert("PAYPALISHIRING", 5);
 	cout<<ret<<"\n";
-	ret = ps->convert("ABCD", 3);
+	ret = ps->convert("ABCD", 5);
 	cout<<ret<<"\n";
 	return 0;
 }
