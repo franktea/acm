@@ -9,6 +9,8 @@
 
 using namespace std;
 
+// 用了广度优先，空间复杂度不符合题目要求。题目要求用递归，或者常量空间。
+
 //Definition for binary tree with next pointer.
 struct TreeLinkNode {
 	int val;
@@ -23,7 +25,7 @@ public:
 
     	queue<std::pair<int, TreeLinkNode*>> bfs;
     	bfs.push({0, root});
-    	while(bfs.empty())
+    	while(!bfs.empty())
     	{
     		auto p = bfs.front();
     		bfs.pop();
