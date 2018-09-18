@@ -13,6 +13,9 @@ using namespace std;
 class Solution {
 public:
     int minDistance(string word1, string word2) {
+    	//return Distance(0, 0, word1, word2);
+
+    	// 将递归改成循环，用二维数组记录中间结果
     	vector<vector<int>> matrix;
     	matrix.resize(word1.size()+1);
     	for(vector<int>& v: matrix)
@@ -22,7 +25,7 @@ public:
     	for(int j = 0; j < word2.size(); ++j)
     		matrix[word1.size()][j] = int(word2.length()) - j;
 
-    	for(int i = 0; i < word2.length(); ++i)
+    	for(int i = 0; i < word1.length(); ++i)
     		matrix[i][word2.size()] = word1.length() - i;
 
     	for(int i = word1.length() - 1; i >= 0; --i)
@@ -70,7 +73,7 @@ private:
 int main()
 {
 	Solution* ps = new Solution;
-	int ret = ps->minDistance("plasma", "altruism");
+	int ret = ps->minDistance("abc", "abcdef");
 	cout<<"ret="<<ret<<"\n";
 	return 0;
 }
