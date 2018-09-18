@@ -31,7 +31,7 @@ public:
     	return std::max(result, result2);
     }
 private:
-    int MaxOf(vector<int>& prices, int i, int j)
+    int MaxOf(vector<int>& prices, int i, int j) // 求区间[i,j], i<=j，求此区间只买卖一次的最大收益。
     {
         	if(prices.empty()) return 0;
 
