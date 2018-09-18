@@ -12,6 +12,10 @@
 
 using namespace std;
 
+// 感觉上确实有很多重复计算的地方，但是暂时不知道怎么用dp，用遍历的方法，打败了65%。
+// 以每个点为左上角(x, y)，扫描所有可能的右下角形成的最大为1的矩形。
+// 有一个技巧，在当前左上角的所有右下角中，只要碰到任何一个不为1的点，后面就不用再扫了，因为要找的是全部为1的矩形。
+
 class Solution {
 public:
     int maximalRectangle(vector<vector<char>>& matrix) {
