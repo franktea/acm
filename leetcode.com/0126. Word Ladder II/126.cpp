@@ -15,6 +15,13 @@
 
 using namespace std;
 
+// 所有单词构成无向图。其实是在无向图中找出所有最短路径。
+// 如果只是找一条最短路径，可以用bfs。找全部的也可以用bfs，就是在找到第一条路径的时候，记住当前的level，不要停下来，继续找，
+// 知道当前level的节点遍历完毕为止。
+// 有一个需要注意的问题，在遍历节点时，如果展开碰到曾经遍历过的节点，且该节点为的level为当前节点的level+1，表示当前节点也是一条新的最短路径。
+// 典型的case：
+// begin = red, end = tax, wordlist=[red, ted, rex, tex, tad, tax]
+
 class Solution {
 public:
     vector<vector<string>> findLadders(string beginWord, string endWord, vector<string>& wordList) {
@@ -68,19 +75,19 @@ public:
     		}
     	}
 
-    	for(auto&& s: wordList)
-    	{
-    		cout<<s<<", ";
-    	}
-    	cout<<"\n";
-//
-//    	for(auto&& it: edges)
-//    	{
-//    		cout<<it.first<<": ";
-//    		for(int i: it.second)
-//    			cout<<i<<", ";
-//    		cout<<"\n";
-//    	}
+    	const int end_index = wordList.size() - 1;
+
+    	// 如果beginword或者endword没有任何邻结点，直接返回
+		auto it1 = edges.find(0);
+		if(it1 == edges.end() || it1->second.empty())
+		{
+			return ret;
+		}
+		auto it2 = edges.find(end_index);
+		if(it2 == edges.end() || it2->second.empty())
+		{
+			return ret;
+		}
 
     	std::vector<int> visited;
     	visited.resize(wordList.size(), 0);
@@ -96,12 +103,12 @@ public:
     	//key->value存的是每个单词在遍历时的父节点下标，找到结果时根据这个结果可以还原出路径，
     	//本解法不含起始节点，因为起始节点的index是0
     	std::map<int, PathItem> path;
-    	const int end_index = wordList.size() - 1;
     	int end_level = std::numeric_limits<int>::max();
     	while(! bfs_queue.empty())
     	{
     		BfsItem bi = bfs_queue.front();
     		bfs_queue.pop();
+
     		if(bi.level > end_level)
     			break;
 
@@ -127,23 +134,6 @@ public:
     			}
     			bfs_queue.push({bi.level+1, son});
     		}
-    	}
-
-//    	cout<<"end parents:";
-//    	for(int i: end_parents)
-//    		cout<<i<<", ";
-//    	cout<<"\n";
-//
-//    	for(auto it: path)
-//    		cout<<it.first<<"->"<<it.second<<"\n";
-
-    	for(auto&& it: path)
-    	{
-    		cout<<it.first<<": level="<<it.second.level<<", parents=[";
-    		for(int v: it.second.parents)
-    			cout<<v<<", ";
-    		cout<<"]";
-    		cout<<"\n";
     	}
 
     	points.push_back(end_index);
@@ -185,9 +175,12 @@ static int fast=[](){ios::sync_with_stdio(0);cin.tie(0);cout.tie(0);return 0;}()
 int main()
 {
 	Solution* ps = new Solution;
-	string begin_word = "red";
-	string end_word = "tax";
-	vector<string> words = {"ted","tex","red","tax","tad","den","rex","pee"};
+//	string begin_word = "red";
+//	string end_word = "tax";
+//	vector<string> words = {"ted","tex","red","tax","tad","den","rex","pee"};
+	string begin_word = "hot";
+	string end_word = "dog";
+	vector<string> words = {"hot", "dog"};
 	auto&& ret = ps->findLadders(begin_word, end_word, words);
 	for(auto&& v: ret)
 	{
