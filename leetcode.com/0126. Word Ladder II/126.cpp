@@ -20,9 +20,18 @@ public:
     vector<vector<string>> findLadders(string beginWord, string endWord, vector<string>& wordList) {
     	vector<vector<string>> ret;
     	std::map<int, std::set<int>> edges; // key和value都是在wordList中的下标
-    	// wordlist不包含开始单词，将其插入到数组的开头
-    	wordList.push_back(beginWord);
-    	std::iter_swap(wordList.begin(), wordList.end()-1);
+    	// wordlist不包含开始单词，将其插入到数组的开头(有些case居然含有endword，好恶心，先找一下)
+    	auto begin_it = std::find(wordList.begin(), wordList.end(), beginWord);
+    	if(begin_it == wordList.end())
+    	{
+			wordList.push_back(beginWord);
+			std::iter_swap(wordList.begin(), wordList.end()-1);
+    	}
+    	else
+    	{
+    		std::iter_swap(wordList.begin(), begin_it);
+    	}
+
     	//先查找endword是否存在
     	auto it = std::find(wordList.begin(), wordList.end(), endWord);
     	if(it == wordList.end())
@@ -149,9 +158,9 @@ static int fast=[](){ios::sync_with_stdio(0);cin.tie(0);cout.tie(0);return 0;}()
 int main()
 {
 	Solution* ps = new Solution;
-	string begin_word = "hit";
-	string end_word = "cog";
-	vector<string> words = {"hot","dot","dog","lot","log","cog"};
+	string begin_word = "red";
+	string end_word = "tax";
+	vector<string> words = {"ted","tex","red","tax","tad","den","rex","pee"};
 	auto&& ret = ps->findLadders(begin_word, end_word, words);
 	for(auto&& v: ret)
 	{
