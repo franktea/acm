@@ -68,11 +68,11 @@ public:
     		}
     	}
 
-//    	for(auto&& s: wordList)
-//    	{
-//    		cout<<s<<", ";
-//    	}
-//    	cout<<"\n";
+    	for(auto&& s: wordList)
+    	{
+    		cout<<s<<", ";
+    	}
+    	cout<<"\n";
 //
 //    	for(auto&& it: edges)
 //    	{
@@ -92,11 +92,11 @@ public:
     	std::queue<BfsItem> bfs_queue;
     	visited[0] = 1;
     	bfs_queue.push({0, 0});
+
     	//key->value存的是每个单词在遍历时的父节点下标，找到结果时根据这个结果可以还原出路径，
     	//本解法不含起始节点，因为起始节点的index是0
-    	std::map<int, int> path;
+    	std::map<int, PathItem> path;
     	const int end_index = wordList.size() - 1;
-    	std::vector<int> end_parents;
     	int end_level = std::numeric_limits<int>::max();
     	while(! bfs_queue.empty())
     	{
@@ -112,16 +112,17 @@ public:
     		{
     			if(visited[son])
     			{
-    				if(son == end_index)
-    					end_parents.push_back(bi.index);
+    				if(path[son].level == bi.level+1)
+    				{
+    					path[son].parents.push_back(bi.index);
+    				}
 
     				continue;
     			}
     			visited[son] = 1;
-    			path[son] = bi.index;
+    			path[son] = PathItem{bi.level+1, std::vector<int>{bi.index}};
     			if(son == end_index)
     			{
-    				end_parents.push_back(bi.index);
     				end_level = bi.level;
     			}
     			bfs_queue.push({bi.level+1, son});
@@ -136,21 +137,47 @@ public:
 //    	for(auto it: path)
 //    		cout<<it.first<<"->"<<it.second<<"\n";
 
-    	for(int v: end_parents) // 如果路径找到，end_parents包含了endword所有最短路径的父节点
+    	for(auto&& it: path)
     	{
-    		vector<string> word_path;
-    		word_path.push_back(wordList.back());// add endword
-    		word_path.push_back(wordList[v]);
-    		while(v)
-    		{
-    			v=path[v];
-    			word_path.push_back(wordList[v]);
-    		}
-    		std::reverse(word_path.begin(), word_path.end());
-    		ret.push_back(word_path);
+    		cout<<it.first<<": level="<<it.second.level<<", parents=[";
+    		for(int v: it.second.parents)
+    			cout<<v<<", ";
+    		cout<<"]";
+    		cout<<"\n";
     	}
 
+    	points.push_back(end_index);
+    	DFS(end_index, path, wordList, ret);
+
     	return ret;
+    }
+private:
+	struct PathItem
+	{
+		int level;
+		vector<int> parents;
+	};
+	vector<int> points;
+    void DFS(int index, std::map<int, PathItem>& path, vector<string>& words, vector<vector<string>>& result)
+    {
+    	if(0 == index) // output
+    	{
+    		vector<string> v;
+    		for(auto it = points.rbegin(); it != points.rend(); ++it)
+    		{
+    			v.push_back(words[*it]);
+    		}
+    		result.push_back(v);
+    		return;
+    	}
+
+    	auto it = path.find(index);
+    	for(int v: it->second.parents)
+    	{
+    		points.push_back(v);
+    		DFS(v, path, words, result);
+    		points.pop_back();
+    	}
     }
 };
 static int fast=[](){ios::sync_with_stdio(0);cin.tie(0);cout.tie(0);return 0;}();
