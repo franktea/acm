@@ -4,7 +4,9 @@ import java.util.List;
 class Solution {
     public List<List<Integer>> combinationSum(int[] candidates, int target) {
     	List<List<Integer>> ret = new ArrayList<List<Integer>>();
-    	int[] counts = new int[candidates.length];
+    	
+    	// 用一个数组，记录每个候选元素被选择的次数，次数可以为0，表示不选
+    	int[] counts = new int[candidates.length]; // 从candidates中选择候选元素，第i个元素选择counts[i]次
     	
     	DFS(ret, counts, candidates, 0, target);
     	
