@@ -12,35 +12,45 @@
 
 using namespace std;
 
-// 想到一个不是很好的方法，会生成重复的解，需要去重：
-// f1: ()
-// f2: (()), ()()
-// f3: ((()), (()()), ()(()), ()()(), (())(), ()()()...
-// 即fn是在f(n-1)的每个解法两边加括号、以及放在每个解的左边、右边。然后再去重、排序
+// n个括号生成的字符串共有2n个元素，每个元素有2种可能：左括号、右括号。
+// 用递归即可，深度优先，复杂度2**2n
 
 class Solution {
 public:
-    vector<string> generateParenthesis(int n) {
-    	vector<string> result;
-    	if(n == 0) return result;
-    	if(n == 1) return vector<string>{"()"};
-
-    	result = {"()"};
-    	unordered_set<string> tmp1;
-    	for(int i = 2; i <= n; ++i)
+    vector<string> generateParenthesis(int n)
+	{
+    	vector<string> ret;
+    	string tmp;
+    	tmp.resize(2*n);
+    	dfs(ret, tmp, 0, 0, 2*n);
+    	return ret;
+    }
+private:
+    // sum 表示当前生成的字符串的值的和，左括号为1，右括号为-1，路径上所有的和都必须大于等于0，如果小于0，则肯定不是合法字符串。
+    void dfs(vector<string>& result, string& str, const int sum, const int depth, const int max_depth)
+    {
+    	if(depth >= max_depth)
     	{
-    		for(const string& str: result)
-    		{
-    			tmp1.insert(string("(")+str+string(")"));
-    			tmp1.insert(string("()")+str);
-    			tmp1.insert(str+string("()"));
-    		}
-    		result.clear();
-    		result.assign(tmp1.begin(), tmp1.end());
-    		tmp1.clear();
+    		if(sum == 0)
+    			result.push_back(str);
+    		return;
     	}
-    	std::sort(result.begin(), result.end());
-    	return result;
+
+    	const string s = "()";
+    	for(const char c: s)
+    	{
+    		const int v = sum + value(c);
+    		if(v < 0)
+    			continue;
+
+    		str[depth] = c;
+    		dfs(result, str, v, depth+1, max_depth);
+    	}
+    }
+
+    int value(char c)
+    {
+    	return c == '(' ? 1 : -1;
     }
 };
 static int fast=[](){ios::sync_with_stdio(0);cin.tie(0);cout.tie(0);return 0;}();
