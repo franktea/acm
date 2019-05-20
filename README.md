@@ -1,2 +1,2 @@
 # acm
-acm coding when boring or for exercise
+acm or algorithm coding when boring or for exercise
