@@ -24,13 +24,13 @@ public:
         for(int index = nums.size() - 1; index >= 0; --index)
         {
             auto it = m.lower_bound(nums[index]);
-//            cout<<"index="<<index<<", "<<"distance="<<std::distance(m.begin(), it)<<", m=[";
-//            for(int i: m)
-//            {
-//                cout<<i<<", ";
-//            }
-//            cout<<"]\n";
-
+/*            cout<<"index="<<index<<", "<<"distance="<<std::distance(m.begin(), it)<<", m=[";
+            for(int i: m)
+            {
+                cout<<i<<", ";
+            }
+            cout<<"]\n";
+*/
             result[index] = std::distance(m.begin(), it);
             m.insert(nums[index]);
         }
@@ -42,7 +42,7 @@ static int fast = []() {ios_base::sync_with_stdio(0); cin.tie(0); cout.tie(0); r
 
 int main()
 {
-    std::vector<int> v = {3, 5, 7, 2, 0, 1, 9, 4};
+    std::vector<int> v = {3, 1, 1, 0, 1, 9, 4};
     Solution s;
     std::vector<int> v2 = s.countSmaller(v);
     for(int i: v2)
