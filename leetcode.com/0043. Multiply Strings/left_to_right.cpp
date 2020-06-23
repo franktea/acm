@@ -23,8 +23,8 @@ public:
             for(int j = 0; j < num2.size(); ++j) // 这里是被乘数
             {
                 int tmp = (num1[i] - '0') * (num2[j] - '0');
-                add_char(result, i + j + 1, tmp % 10);
-                if(tmp / 10 > 0)
+                add_char(result, i + j + 1, tmp % 10); // 处理个位数
+                if(tmp / 10 > 0)  // 处理十位数，如果有的话
                     add_char(result, i + j, tmp / 10);
             }
         }
@@ -36,5 +36,4 @@ public:
         return result;
     }
 };
-
 
